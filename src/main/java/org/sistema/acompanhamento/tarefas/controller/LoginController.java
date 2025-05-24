@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.sistema.acompanhamento.tarefas.model.Usuario;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
 import org.sistema.acompanhamento.tarefas.model.dto.LoginUsuarioDto;
-import org.sistema.acompanhamento.tarefas.repository.LoginService;
+import org.sistema.acompanhamento.tarefas.services.LoginService;
 
 import java.io.IOException;
 

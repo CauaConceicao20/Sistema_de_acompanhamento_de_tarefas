@@ -1,6 +1,7 @@
-package org.sistema.acompanhamento.tarefas.repository;
+package org.sistema.acompanhamento.tarefas.services;
 
 import org.sistema.acompanhamento.tarefas.model.Usuario;
+import org.sistema.acompanhamento.tarefas.repository.UsuarioRepository;
 
 public class LoginService {
 
