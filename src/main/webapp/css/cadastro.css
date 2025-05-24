@@ -1,0 +1,85 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: #212121fa;
+}
+
+.area-de-cadastro {
+    display: flex;
+    width: 500px;
+    height: 720px;
+    margin: 8% auto;
+    background-color: #212121;
+    border-radius: 10px;
+    box-shadow: 2px 15px 20px 1px black;
+}
+
+.sub-area-de-cadastro {
+    margin: auto;
+}
+
+.sub-area-de-cadastro h1 {
+    color: rgb(155, 4, 255);
+    text-align: center;
+}
+
+.inputs-de-cadastro input {
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    margin: 20px auto;
+    width: 320px;
+    padding: 10px;
+    color: rgb(155, 4, 255);
+    border-bottom: 1px solid rgb(155, 4, 255);
+    background-color: transparent;
+}
+
+.inputs-de-cadastro select {
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    width: 320px;
+    padding: 10px;
+    color: rgb(155, 4, 255);
+    border-bottom: 1px solid rgb(155, 4, 255);
+    background-color: transparent;
+}
+
+.inputs-de-cadastro select option {
+    color: black;
+}
+
+.botoes-da-area-de-cadastro {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.botoes-da-area-de-cadastro button {
+    height: 40px;
+    width: 120px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(155, 4, 255);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.botoes-da-area-de-cadastro button:hover {
+    transform: scale(1.1);
+}
+
+.link-voltar-login {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    color: rgb(155, 4, 255);
+    text-decoration: none;
+}
