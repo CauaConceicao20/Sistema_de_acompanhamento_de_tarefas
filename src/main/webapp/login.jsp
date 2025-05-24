@@ -10,7 +10,7 @@
 <body>
 <div class="area-de-login">
     <div class="sub-area-de-login">
-        <form action="${pageContext.request.contextPath}/loginUsuario" method= "post">
+        <form action="${pageContext.request.contextPath}/loginUsuario" method="post">
             <h1>Login</h1>
             <div class="inputs-de-login">
                 <input type="text" name="email" placeholder="E-mail">
@@ -18,7 +18,7 @@
             </div>
 
             <div class="botoes-da-area-de-login">
-                <button id="submit">Login</button>
+                <button type="submit" id="submit">Login</button>
                 <a href="${pageContext.request.contextPath}/cadastrar.jsp">
                     <button type="button">Cadastrar-se</button>
                 </a>
