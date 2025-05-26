@@ -7,6 +7,7 @@ public class LoginUsuarioDto {
     public LoginUsuarioDto(String email, String senha) {
         this.email = email;
         this.senha = senha;
+        validar();
     }
 
     public String getEmail() {
@@ -15,5 +16,11 @@ public class LoginUsuarioDto {
 
     public String getSenha() {
         return senha;
+    }
+
+    private void validar() {
+        if (email == null || email.isBlank() || senha == null || senha.isBlank()) {
+            throw new IllegalArgumentException("Email e senha são obrigatórios.");
+        }
     }
 }

@@ -15,7 +15,7 @@ import java.sql.Statement;
 @WebListener
 public class DataBaseConnection implements ServletContextListener {
 
-    private static final String URL = "jdbc:sqlite:banco-de-dados.db";
+    private static final String URL = "jdbc:sqlite:base-de-dados.db";
 
     public static Connection createConnection() {
         try {

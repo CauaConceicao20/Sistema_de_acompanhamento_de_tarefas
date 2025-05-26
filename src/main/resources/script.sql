@@ -4,10 +4,8 @@ CREATE TABLE IF NOT EXISTS usuario (
     email TEXT NOT NULL UNIQUE,
     senha TEXT NOT NULL,
     cpf TEXT NOT NULL UNIQUE,
-    telefone TEXT,
-    cargo TEXT NOT NULL CHECK (cargo IN ('FUNCIONARIO', 'SUPERVISOR', 'GERENTE')),
-    supervisor_id INTEGER,
-    FOREIGN KEY (supervisor_id) REFERENCES usuario(id)
+    telefone TEXT NOT NULL,
+    cargo TEXT NOT NULL CHECK (cargo IN ('FUNCIONARIO', 'SUPERVISOR', 'GERENTE'))
 );
 
 CREATE TABLE IF NOT EXISTS tarefa (

@@ -1,6 +1,7 @@
-package org.sistema.acompanhamento.tarefas.controller;
+package org.sistema.acompanhamento.tarefas.controller.auth;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,41 +15,39 @@ import java.io.IOException;
 
 public class LoginController extends HttpServlet {
 
-    LoginService loginService = new LoginService();
+    private final LoginService loginService;
+
+    public LoginController() {
+        this.loginService = new LoginService();
+    }
     private final Gson gson = new Gson();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        LoginUsuarioDto loginUsuarioDto = new LoginUsuarioDto(req.getParameter("email"),
-                req.getParameter("senha"));
-
-        if (loginUsuarioDto.getEmail() == null || loginUsuarioDto.getSenha() == null
-        || loginUsuarioDto.getEmail().isBlank() || loginUsuarioDto.getSenha().isBlank()) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.setContentType("application/json");
-            resp.getWriter().write(gson.toJson(new MessageResponseDto("Email e senha são obrigatórios")));
-            return;
-        }
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
 
         try {
+            LoginUsuarioDto loginUsuarioDto = gson.fromJson(req.getReader(), LoginUsuarioDto.class);
+
             Usuario usuario = loginService.login(loginUsuarioDto.getEmail(), loginUsuarioDto.getSenha());
-            HttpSession session = req.getSession();
+
+            HttpSession session = req.getSession(true);
             session.setAttribute("id", usuario.getId());
             session.setAttribute("cargo", usuario.getCargo());
 
+            JsonObject responseJson = new JsonObject();
+            responseJson.addProperty("mensagem", "Acesso Permitido");
+            responseJson.addProperty("cargo", usuario.getCargo().name());
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.setContentType("application/json");
-            resp.getWriter().write(gson.toJson(new MessageResponseDto("Acesso Permitido")));
+            resp.getWriter().write(responseJson.toString());
 
         } catch (IllegalArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.setContentType("application/json");
-            resp.getWriter().write(gson.toJson(new MessageResponseDto("Acesso Negado")));
+            resp.getWriter().write(gson.toJson(new MessageResponseDto(e.getMessage())));
 
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.setContentType("application/json");
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Erro interno do servidor")));
             e.printStackTrace();
         }

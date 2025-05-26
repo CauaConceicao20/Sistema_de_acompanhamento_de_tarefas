@@ -11,7 +11,7 @@
     <div class="area-de-cadastro">
         <div class="sub-area-de-cadastro">
             <h1>Cadastro</h1>
-            <form action="${pageContext.request.contextPath}/cadastraUsuario" method="post">
+            <form id="cadastroForm" method="post">
                 <div class="inputs-de-cadastro">
                     <input type="text" name="nome" placeholder="Nome" required>
                     <input type="email" name="email" placeholder="Email" required>
@@ -34,5 +34,6 @@
             <a href="${pageContext.request.contextPath}/login.jsp" class="link-voltar-login">Já tem uma conta? Fazer login</a>
         </div>
     </div>
+    <script src="${pageContext.request.contextPath}/js/cadastro.js" type="module"></script>
 </body>
 </html>

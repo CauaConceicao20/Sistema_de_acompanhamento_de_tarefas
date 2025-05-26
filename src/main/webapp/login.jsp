@@ -10,11 +10,11 @@
 <body>
 <div class="area-de-login">
     <div class="sub-area-de-login">
-        <form action="${pageContext.request.contextPath}/loginUsuario" method="post">
+        <form id="loginForm">
             <h1>Login</h1>
             <div class="inputs-de-login">
-                <input type="text" name="email" placeholder="E-mail">
-                <input type="password" name="senha" placeholder="Password">
+                <input type="text" name="email" id="email" placeholder="E-mail" required>
+                <input type="password" name="senha" id="senha" placeholder="Senha" required>
             </div>
 
             <div class="botoes-da-area-de-login">
@@ -25,8 +25,9 @@
             </div>
         </form>
         <a href="#" class="esqueci-a-senha">Esqueci minha senha</a>
+        <div id="mensagem"></div>
     </div>
 </div>
-<script src="${pageContext.request.contextPath}/js/login.js" type="module"></script>
+<script src="${pageContext.request.contextPath}/js/tela-login.js" type="module"></script>
 </body>
 </html>

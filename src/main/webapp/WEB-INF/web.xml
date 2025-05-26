@@ -7,7 +7,7 @@
     <!-- Login -->
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>org.sistema.acompanhamento.tarefas.controller.LoginController</servlet-class>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.auth.LoginController</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -18,7 +18,7 @@
     <!--Cadastro-->
     <servlet>
         <servlet-name>CadastroController</servlet-name>
-        <servlet-class>org.sistema.acompanhamento.tarefas.controller.CadastroController</servlet-class>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.auth.CadastroController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CadastroController</servlet-name>
@@ -28,13 +28,47 @@
     <!--Usuario-->
     <servlet>
         <servlet-name>UsuarioController</servlet-name>
-        <servlet-class>org.sistema.acompanhamento.tarefas.controller.UsuarioController</servlet-class>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.usuario.UsuarioController</servlet-class>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>UsuarioController</servlet-name>
         <url-pattern>/listaUsuarios</url-pattern>
     </servlet-mapping>
+
+    <!--Funcionario-->
+    <servlet-mapping>
+        <servlet-name>FuncionarioController</servlet-name>
+        <url-pattern>/listaFuncionarios</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>FuncionarioController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.usuario.FuncionarioController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>FuncionarioComTarefaController</servlet-name>
+        <url-pattern>/listaFuncionariosComTarefas</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>FuncionarioComTarefaController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.usuario.FuncionarioComTarefaController</servlet-class>
+    </servlet>
+
+    <!--Tarefa-->
+    <servlet-mapping>
+        <servlet-name>TarefaController</servlet-name>
+        <url-pattern>/cadastraTarefa</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>TarefaController</servlet-name>
+        <url-pattern>/listaTarefas</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TarefaController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.tarefa.TarefaController</servlet-class>
+    </servlet>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

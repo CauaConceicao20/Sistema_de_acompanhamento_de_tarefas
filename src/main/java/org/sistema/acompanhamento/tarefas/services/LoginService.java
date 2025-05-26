@@ -5,7 +5,11 @@ import org.sistema.acompanhamento.tarefas.repository.UsuarioRepository;
 
 public class LoginService {
 
-    UsuarioRepository usuarioRepository = new UsuarioRepository();
+   private final UsuarioRepository usuarioRepository;
+
+    public LoginService() {
+        this.usuarioRepository = new UsuarioRepository();
+    }
 
     public Usuario login(String email, String senha) {
         Usuario usuario = validaCredencias(email, senha);
@@ -24,14 +28,12 @@ public class LoginService {
             System.out.println("Erro ao logar");
             return null;
         }
-        else if (usuario == null) {
-            System.out.println("Erro ao logar");
-            return null;
-        }
+
         else if (!usuario.getSenha().equals(senha)) {
             System.out.println("Erro ao logar");
             return null;
         }
+
         return usuario;
     }
 

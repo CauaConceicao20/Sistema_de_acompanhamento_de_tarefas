@@ -17,8 +17,8 @@ public class UsuarioRepository {
 
     public Usuario createUsuario(Usuario usuario) {
         String sql = "INSERT INTO usuario (nome, email, senha, cpf, telefone, cargo) VALUES (?, ?, ?, ?, ?, ?)";
-        Connection conn = null;
 
+        Connection conn = null;
         PreparedStatement pstm = null;
 
         try {
@@ -210,9 +210,7 @@ public class UsuarioRepository {
                 usuario = new Supervisor();
                 break;
             case FUNCIONARIO:
-                Funcionario funcionario = new Funcionario();
-                funcionario.setSupervisorId(rset.getLong("supervisor_id"));
-                usuario = funcionario;
+                usuario = new Funcionario();
                 break;
             default:
                 throw new IllegalArgumentException("Cargo desconhecido: " + cargoStr);
@@ -227,5 +225,42 @@ public class UsuarioRepository {
         usuario.setCargo(cargo);
 
         return usuario;
+    }
+
+    public List<Funcionario> findAllEmployeesWithTasks() {
+        String sql = "SELECT u.* FROM usuario u INNER JOIN tarefa t ON u.id = t.funcionario_id WHERE u.cargo = 'FUNCIONARIO'";
+        List<Funcionario> funcionarios = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstm = null;
+        ResultSet rset = null;
+        try {
+            conn = DataBaseConnection.createConnection();
+            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            rset = pstm.executeQuery();
+
+            while (rset.next()) {
+                funcionarios.add((Funcionario) mapUsuarioFromResultSet(rset));
+            }
+            return funcionarios;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return funcionarios;
+        } finally {
+            try {
+                if (pstm != null) {
+                    pstm.close();
+                }
+                if (rset != null) {
+                    rset.close();
+                }
+
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

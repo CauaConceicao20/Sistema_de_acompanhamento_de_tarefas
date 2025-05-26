@@ -12,7 +12,6 @@ public class CadastroUsuarioDto {
     private String senha;
     private String cpf;
     private String telefone;
-    private Long supervisorId;
     private Cargo cargo;
 
     public CadastroUsuarioDto(String nome, String email, String senha, String cpf, String telefone, Long supervisorId, Cargo cargo) {
@@ -21,7 +20,6 @@ public class CadastroUsuarioDto {
         this.senha = senha;
         this.cpf = cpf;
         this.telefone = telefone;
-        this.supervisorId = supervisorId;
         this.cargo = cargo;
         validar();
     }
@@ -90,14 +88,6 @@ public class CadastroUsuarioDto {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    public Long getSupervisorId() {
-        return supervisorId;
-    }
-
-    public void setSupervisorId(Long supervisorId) {
-        this.supervisorId = supervisorId;
     }
 
     public Cargo getCargo() {
