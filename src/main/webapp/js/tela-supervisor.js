@@ -76,4 +76,63 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(error.message);
             });
     });
+
+
+    function renderizarTarefas(tarefas) {
+        const lista = document.getElementById('lista-tarefas');
+        lista.innerHTML = '';
+
+        if (!tarefas || tarefas.length === 0) {
+            return;
+        }
+
+        tarefas.forEach(tarefa => {
+            const div = document.createElement('div');
+            div.classList.add('tarefa');
+
+            div.innerHTML = `
+                <h3>${tarefa.nome}</h3>
+                <p><strong>Descrição:</strong> ${tarefa.descricao}</p>
+                <p><strong>Funcionário:</strong> ${tarefa.nomeFuncionario || 'Desconhecido'}</p>
+            `;
+
+            lista.appendChild(div);
+        });
+    }
+
+    function listarTarefas(endpoint) {
+        const select = document.getElementById('select-funcionario-filtro');
+        const funcionarioId = select.value;
+
+        const lista = document.getElementById('lista-tarefas');
+        lista.innerHTML = '';
+
+        if (!funcionarioId) {
+            alert('Selecione um funcionário para filtrar.');
+            return;
+        }
+
+        fetch(`${contextPath}${endpoint}/${funcionarioId}`)
+            .then(async response => {
+                if (!response.ok) {
+                    const errorMsg = await response.json();
+                    if (response.status === 404) {
+                        alert(errorMsg.message || 'Nenhuma tarefa encontrada.');
+                        return null;
+                    }
+                    throw new Error(errorMsg.message || 'Erro ao buscar tarefas');
+                }
+                return response.json();
+            })
+            .then(tarefas => {
+                if (tarefas) renderizarTarefas(tarefas);
+            })
+            .catch(error => {
+                console.error('Erro ao carregar as tarefas:', error);
+            });
+    }
+
+    window.definirEndpoint = function(endpoint) {
+        listarTarefas(endpoint);
+    };
 });

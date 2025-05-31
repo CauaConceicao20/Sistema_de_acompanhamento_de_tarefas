@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.sistema.acompanhamento.tarefas.model.Funcionario;
 import org.sistema.acompanhamento.tarefas.model.dto.ListaUsuariosDto;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
@@ -26,14 +27,22 @@ public class FuncionarioController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         try {
-            List<Funcionario> funcionarios = usuarioService.listaFuncionarios();
+            HttpSession session = req.getSession(false);
+            if (session == null || session.getAttribute("id") == null) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autenticado")));
+                return;
+            }
+            Long usuarioId = (Long) session.getAttribute("id");
+
+            List<Funcionario> funcionarios = usuarioService.listaFuncionariosDeUmSupervisorEspecifico(usuarioId);
 
             if (funcionarios.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 resp.getWriter().write(gson.toJson(new MessageResponseDto("Nenhum funcionário encontrado")));
             } else {
                 List<ListaUsuariosDto> listDto = funcionarios.stream()
-                        .map(funcionario -> new ListaUsuariosDto(funcionario))
+                        .map(funcionario -> new ListaUsuariosDto(funcionario, null))
                         .toList();
                 String json = gson.toJson(listDto);
                 resp.setContentType("application/json");

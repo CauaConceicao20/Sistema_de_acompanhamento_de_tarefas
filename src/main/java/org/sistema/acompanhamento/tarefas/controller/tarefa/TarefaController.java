@@ -10,7 +10,6 @@ import org.sistema.acompanhamento.tarefas.model.dto.CadastroTarefaDto;
 import org.sistema.acompanhamento.tarefas.model.dto.ListaTarefasDto;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
 import org.sistema.acompanhamento.tarefas.model.enums.Cargo;
-import org.sistema.acompanhamento.tarefas.repository.TarefaRepository;
 import org.sistema.acompanhamento.tarefas.services.TarefaService;
 
 import java.io.IOException;
@@ -37,8 +36,10 @@ public class TarefaController extends HttpServlet {
                 resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autenticado")));
                 return;
             }
+
             Long usuarioId = (Long) session.getAttribute("id");
             Cargo cargo = (Cargo) session.getAttribute("cargo");
+
 
             if (usuarioId == null || usuarioId < 1L || cargo != Cargo.SUPERVISOR) {
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -67,8 +68,6 @@ public class TarefaController extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        List<Tarefa> tarefas = tarefaService.listaTarefas();
-
         try {
             HttpSession session = req.getSession(false);
             if (session == null) {
@@ -80,13 +79,13 @@ public class TarefaController extends HttpServlet {
             Long usuarioId = (Long) session.getAttribute("id");
             Cargo cargo = (Cargo) session.getAttribute("cargo");
 
-            if (usuarioId == null || usuarioId < 1L || cargo != Cargo.SUPERVISOR) {
+            if (usuarioId == null || usuarioId < 1L || cargo != Cargo.FUNCIONARIO) {
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autorizado")));
                 return;
             }
 
-            tarefas = tarefaService.listaTarefas();
+            List<Tarefa> tarefas = tarefaService.listaTarefasDeFuncionario(usuarioId);
 
             if(tarefas.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);

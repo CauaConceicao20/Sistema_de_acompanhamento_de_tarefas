@@ -32,7 +32,7 @@ public class UsuarioController extends HttpServlet {
             }
             else {
                 List<ListaUsuariosDto> listDto = usuarios.stream()
-                        .map(usuario -> new ListaUsuariosDto(usuario)).toList();
+                        .map(usuario -> new ListaUsuariosDto(usuario, null)).toList();
 
                 String json = gson.toJson(listDto);
                 resp.setContentType("application/json");

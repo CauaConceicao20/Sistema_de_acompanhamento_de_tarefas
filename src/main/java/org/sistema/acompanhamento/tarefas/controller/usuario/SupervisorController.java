@@ -6,23 +6,25 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.sistema.acompanhamento.tarefas.model.Funcionario;
+import org.sistema.acompanhamento.tarefas.model.Supervisor;
 import org.sistema.acompanhamento.tarefas.model.dto.ListaUsuariosDto;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
+import org.sistema.acompanhamento.tarefas.model.enums.Cargo;
 import org.sistema.acompanhamento.tarefas.services.UsuarioService;
 
 import java.io.IOException;
 import java.util.List;
 
-
-public class FuncionarioComTarefaController extends HttpServlet {
+public class SupervisorController extends HttpServlet {
 
     private final UsuarioService usuarioService;
 
-    public FuncionarioComTarefaController() {
+    public SupervisorController() {
         this.usuarioService = new UsuarioService();
     }
 
     Gson gson = new Gson();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
@@ -33,14 +35,22 @@ public class FuncionarioComTarefaController extends HttpServlet {
                 return;
             }
             Long usuarioId = (Long) session.getAttribute("id");
+            Cargo cargo = (Cargo) session.getAttribute("cargo");
 
-            List<Funcionario> funcionarios = usuarioService.listaFuncionariosComTarefas();
-            if (funcionarios.isEmpty()) {
+            if (usuarioId == null || usuarioId < 1L || cargo != Cargo.GERENTE) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autorizado")));
+                return;
+            }
+
+            List<Supervisor> supervisores = usuarioService.listaSupervisores();
+
+            if (supervisores.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Nenhum funcionário encontrado")));
+                resp.getWriter().write(gson.toJson(new MessageResponseDto("Nenhum supervisor encontrado")));
             } else {
-                List<ListaUsuariosDto> listDto = funcionarios.stream()
-                        .map(funcionario -> new ListaUsuariosDto(funcionario, usuarioId))
+                List<ListaUsuariosDto> listDto = supervisores.stream()
+                        .map(supervisor -> new ListaUsuariosDto(supervisor, null))
                         .toList();
                 String json = gson.toJson(listDto);
                 resp.setContentType("application/json");

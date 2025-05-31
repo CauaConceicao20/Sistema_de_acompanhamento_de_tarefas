@@ -10,13 +10,15 @@ public class ListaUsuariosDto {
     private String cpf;
     private String telefone;
     private Cargo cargo;
+    private Long supervisorId;
 
-    public ListaUsuariosDto(Usuario usuario) {
+    public ListaUsuariosDto(Usuario usuario, Long supervisorId) {
         this.id = usuario.getId();
         this.nome = usuario.getNome();
         this.email = usuario.getEmail();
         this.cpf = usuario.getCpf();
         this.telefone = usuario.getTelefone();
         this.cargo = usuario.getCargo();
+        this.supervisorId = supervisorId;
     }
 }

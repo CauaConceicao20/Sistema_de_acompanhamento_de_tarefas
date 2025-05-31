@@ -12,8 +12,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     mensagemDiv.textContent = '';
 
     if (!email || !senha) {
-        mensagemDiv.textContent = 'Email e senha são obrigatórios.';
-        mensagemDiv.style.color = 'red';
+        alert("Email e Senha são obrigatorios")
         return;
     }
 
@@ -29,15 +28,10 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
         const data = await response.json();
 
         if (response.ok) {
-            mensagemDiv.textContent = data.mensagem || 'Login realizado com sucesso.';
-            mensagemDiv.style.color = 'green';
-
-
             const cargo = data.cargo ? data.cargo : null;
 
             switch (cargo) {
                 case 'SUPERVISOR':
-                    alert("Funcionou");
                     window.location.href = `${contextPath}/tela-supervisor.jsp`;
                     break;
                 case 'GERENTE':
@@ -49,14 +43,10 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
                 default:
                     alert('Cargo desconhecido: ' + cargo);
             }
-
         } else {
-            mensagemDiv.textContent = data.mensagem || 'Erro no login.';
-            mensagemDiv.style.color = 'red';
+            alert(data.message);
         }
     } catch (error) {
-        mensagemDiv.textContent = 'Erro ao conectar com o servidor.';
-        mensagemDiv.style.color = 'red';
         console.log(error);
     }
 });

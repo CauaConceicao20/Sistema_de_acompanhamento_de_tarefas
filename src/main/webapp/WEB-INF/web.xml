@@ -54,6 +54,16 @@
         <servlet-class>org.sistema.acompanhamento.tarefas.controller.usuario.FuncionarioComTarefaController</servlet-class>
     </servlet>
 
+    <!--Gerente-->
+    <servlet-mapping>
+        <servlet-name>SupervisorController</servlet-name>
+        <url-pattern>/listaSupervisores</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>SupervisorController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.usuario.SupervisorController</servlet-class>
+    </servlet>
+
     <!--Tarefa-->
     <servlet-mapping>
         <servlet-name>TarefaController</servlet-name>
@@ -62,7 +72,7 @@
 
     <servlet-mapping>
         <servlet-name>TarefaController</servlet-name>
-        <url-pattern>/listaTarefas</url-pattern>
+        <url-pattern>/listaTarefasDeFuncionario</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -70,8 +80,73 @@
         <servlet-class>org.sistema.acompanhamento.tarefas.controller.tarefa.TarefaController</servlet-class>
     </servlet>
 
+<!--Tarefas Concluidas e Pendentes-->
+
+    <servlet-mapping>
+        <servlet-name>TarefasConcluidasController</servlet-name>
+        <url-pattern>/listaTarefasConcluidas/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet-mapping>
+        <servlet-name>TarefasPendentesController</servlet-name>
+        <url-pattern>/listaTarefasPendentes/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>TarefasConcluidasController</servlet-name>
+        <url-pattern>/marcaComoConcluida/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>TarefasPendentesController</servlet-name>
+        <url-pattern>/marcaComoPendente/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TarefasConcluidasController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.tarefa.TarefasConcluidasController</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>TarefasPendentesController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.tarefa.TarefasPendentesController</servlet-class>
+    </servlet>
+
+    <!--Relatorios-->
+
+    <servlet-mapping>
+        <servlet-name>RelatorioDeTarefasSupervisorController</servlet-name>
+        <url-pattern>/relatorioDeTarefasCadastradasPorSupervisor/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioDeTarefasPendentesController</servlet-name>
+        <url-pattern>/relatorioDeTarefasPendentes</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RelatorioFuncionariosSemPendenciasController</servlet-name>
+        <url-pattern>/relatorioDeFuncionariosSemPendencias</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RelatorioFuncionariosSemPendenciasController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.relatorio.RelatorioFuncionariosSemPendenciasController</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>RelatorioDeTarefasPendentesController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.relatorio.RelatorioDeTarefasPendentesController</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>RelatorioDeTarefasSupervisorController</servlet-name>
+        <servlet-class>org.sistema.acompanhamento.tarefas.controller.relatorio.RelatorioDeTarefasSupervisorController</servlet-class>
+    </servlet>
+
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
 
 </web-app>

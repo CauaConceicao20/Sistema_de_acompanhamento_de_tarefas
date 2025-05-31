@@ -35,14 +35,12 @@
                         <option value="" disabled selected hidden>Selecionar funcionário</option>
                     </select>
                     <input type="hidden" name="tipo" id="tipo-tarefa">
-                    <button type="button" onclick="definirEndpoint('/listarTarefasPendentes')">Listar Pendentes</button>
-                    <button type="button" onclick="definirEndpoint('/listarTarefasConcluidas')">Listar Concluídas</button>
+                    <button type="button" onclick="definirEndpoint('/listaTarefasPendentes')">Listar Pendentes</button>
+                    <button type="button" onclick="definirEndpoint('/listaTarefasConcluidas')">Listar Concluídas</button>
                 </div>
             </form>
         </div>
-
-        <div class="lista-tarefas" id="lista-tarefas">
-        </div>
+        <div class="lista-tarefas" id="lista-tarefas"></div>
     </div>
 </div>
 <script src="${pageContext.request.contextPath}/js/tela-supervisor.js" type="module"></script>
