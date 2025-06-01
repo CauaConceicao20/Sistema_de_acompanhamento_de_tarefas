@@ -5,12 +5,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.sistema.acompanhamento.tarefas.exception.TarefaNotFoundException;
 import org.sistema.acompanhamento.tarefas.model.Tarefa;
 import org.sistema.acompanhamento.tarefas.model.dto.CadastroTarefaDto;
 import org.sistema.acompanhamento.tarefas.model.dto.ListaTarefasDto;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
 import org.sistema.acompanhamento.tarefas.model.enums.Cargo;
 import org.sistema.acompanhamento.tarefas.services.TarefaService;
+import org.sistema.acompanhamento.tarefas.util.ControllerUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,35 +32,24 @@ public class TarefaController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         try {
-            HttpSession session = req.getSession(false);
-            if (session == null) {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autenticado")));
-                return;
-            }
+            HttpSession session = ControllerUtils.validarSessao(req, resp);
+            if (session == null) return;
+
+            if (!ControllerUtils.validarCargo(session, Cargo.SUPERVISOR, resp)) return;
 
             Long usuarioId = (Long) session.getAttribute("id");
-            Cargo cargo = (Cargo) session.getAttribute("cargo");
-
-
-            if (usuarioId == null || usuarioId < 1L || cargo != Cargo.SUPERVISOR) {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autorizado")));
-                return;
-            }
-
             CadastroTarefaDto cadastroTarefaDto = gson.fromJson(req.getReader(), CadastroTarefaDto.class);
             tarefaService.criaTarefa(new Tarefa(usuarioId, cadastroTarefaDto));
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Tarefa cadastrada com sucesso")));
 
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             resp.getWriter().write(gson.toJson(new MessageResponseDto(e.getMessage())));
             e.printStackTrace();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Erro interno do servidor")));
         }
     }
@@ -69,38 +60,24 @@ public class TarefaController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         try {
-            HttpSession session = req.getSession(false);
-            if (session == null) {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autenticado")));
-                return;
-            }
+            HttpSession session = ControllerUtils.validarSessao(req, resp);
+            if (session == null) return;
+
+            if (!ControllerUtils.validarCargo(session, Cargo.FUNCIONARIO, resp)) return;
 
             Long usuarioId = (Long) session.getAttribute("id");
-            Cargo cargo = (Cargo) session.getAttribute("cargo");
-
-            if (usuarioId == null || usuarioId < 1L || cargo != Cargo.FUNCIONARIO) {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autorizado")));
-                return;
-            }
-
             List<Tarefa> tarefas = tarefaService.listaTarefasDeFuncionario(usuarioId);
 
-            if(tarefas.isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Nenhuma tarefa encontrada")));
-                return;
-            }
             List<ListaTarefasDto> tarefasDto = tarefas.stream()
-                    .map(tarefa -> new ListaTarefasDto(tarefa))
+                    .map(ListaTarefasDto::new)
                     .toList();
 
             String json = gson.toJson(tarefasDto);
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
             resp.getWriter().write(json);
 
+        } catch (TarefaNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(gson.toJson(new MessageResponseDto(e.getMessage())));
         } catch (Exception e) {
             e.printStackTrace();
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

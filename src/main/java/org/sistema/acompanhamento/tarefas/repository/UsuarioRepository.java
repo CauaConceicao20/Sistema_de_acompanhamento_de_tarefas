@@ -15,42 +15,7 @@ import java.util.List;
 
 public class UsuarioRepository {
 
-    /*
-    public Usuario createUsuario(Usuario usuario) {
-        String sql = "INSERT INTO usuario (nome, email, senha, cpf, telefone, cargo) VALUES (?, ?, ?, ?, ?, ?)";
-
-        Connection conn = null;
-        PreparedStatement pstm = null;
-
-        try {
-            conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
-            pstm.setString(1, usuario.getNome());
-            pstm.setString(2, usuario.getEmail());
-            pstm.setString(3, usuario.getSenha());
-            pstm.setString(4, usuario.getCpf());
-            pstm.setString(5, usuario.getTelefone());
-            pstm.setString(6, usuario.getCargo().toString());
-
-            pstm.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return usuario;
-    }
-*/
-    public List<Usuario> findAllUsuarios() {
+    public List<Usuario> listarTodosUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
 
         String sql = "SELECT * FROM usuario";
@@ -63,7 +28,7 @@ public class UsuarioRepository {
             ResultSet rset = pstm.executeQuery();
 
             while (rset.next()) {
-                Usuario usuario = mapUsuarioFromResultSet(rset);
+                Usuario usuario = mapearUsuarioDoResultSet(rset);
                 usuarios.add(usuario);
             }
             return usuarios;
@@ -84,7 +49,7 @@ public class UsuarioRepository {
         }
     }
 
-    public List<Funcionario> findAllFuncionarios() {
+    public List<Funcionario> listarTodosFuncionarios() {
         String sql = "SELECT * FROM usuario WHERE cargo = 'FUNCIONARIO'";
 
         List<Funcionario> usuariosFuncionarios = new ArrayList<>();
@@ -98,7 +63,7 @@ public class UsuarioRepository {
             rset = pstm.executeQuery();
 
             while (rset.next()) {
-                Funcionario usuarioFuncionario = (Funcionario) mapUsuarioFromResultSet(rset);
+                Funcionario usuarioFuncionario = (Funcionario) mapearUsuarioDoResultSet(rset);
                 usuariosFuncionarios.add(usuarioFuncionario);
             }
             return usuariosFuncionarios;
@@ -124,7 +89,7 @@ public class UsuarioRepository {
         }
     }
 
-    public List<Supervisor> findAllSupervisores() {
+    public List<Supervisor> listarTodosSupervisores() {
         String sql = "SELECT * FROM usuario WHERE cargo = 'SUPERVISOR'";
 
         List<Supervisor> usuariosSupervisores = new ArrayList<>();
@@ -132,7 +97,7 @@ public class UsuarioRepository {
         try (Connection conn = DataBaseConnection.createConnection(); PreparedStatement pstm = conn.prepareStatement(sql); ResultSet rset = pstm.executeQuery()) {
 
             while (rset.next()) {
-                Supervisor usuarioSupervisor = (Supervisor) mapUsuarioFromResultSet(rset);
+                Supervisor usuarioSupervisor = (Supervisor) mapearUsuarioDoResultSet(rset);
                 usuariosSupervisores.add(usuarioSupervisor);
             }
             return usuariosSupervisores;
@@ -143,7 +108,7 @@ public class UsuarioRepository {
         }
     }
 
-    public List<Gerente> findAllGerentes() {
+    public List<Gerente> listarTodosGerentes() {
         String sql = "SELECT * FROM usuario WHERE cargo = 'GERENTE'";
 
         List<Gerente> usuariosGerentes = new ArrayList<>();
@@ -151,7 +116,7 @@ public class UsuarioRepository {
         try (Connection conn = DataBaseConnection.createConnection(); PreparedStatement pstm = conn.prepareStatement(sql); ResultSet rset = pstm.executeQuery()) {
 
             while (rset.next()) {
-                Gerente usuarioGerente = (Gerente) mapUsuarioFromResultSet(rset);
+                Gerente usuarioGerente = (Gerente) mapearUsuarioDoResultSet(rset);
                 usuariosGerentes.add(usuarioGerente);
             }
             return usuariosGerentes;
@@ -162,7 +127,7 @@ public class UsuarioRepository {
         }
     }
 
-    public Usuario findByEmailUsuarios(String email) {
+    public Usuario buscarUsuarioPorEmail(String email) {
         String sql = "SELECT * FROM usuario WHERE email = ?";
 
         Connection conn = null;
@@ -176,7 +141,7 @@ public class UsuarioRepository {
 
             Usuario usuario = null;
             if (rset.next()) {
-                usuario = mapUsuarioFromResultSet(rset);
+                usuario = mapearUsuarioDoResultSet(rset);
             }
             return usuario;
 
@@ -198,7 +163,7 @@ public class UsuarioRepository {
         }
     }
 
-    public List<Funcionario> findAllEmployeesWithTasks() {
+    public List<Funcionario> listarFuncionariosComTarefas() {
         String sql = "SELECT u.* FROM usuario u INNER JOIN tarefa t ON u.id = t.funcionario_id WHERE u.cargo = 'FUNCIONARIO'";
         List<Funcionario> funcionarios = new ArrayList<>();
         Connection conn = null;
@@ -210,7 +175,7 @@ public class UsuarioRepository {
             rset = pstm.executeQuery();
 
             while (rset.next()) {
-                funcionarios.add((Funcionario) mapUsuarioFromResultSet(rset));
+                funcionarios.add((Funcionario) mapearUsuarioDoResultSet(rset));
             }
             return funcionarios;
 
@@ -235,7 +200,7 @@ public class UsuarioRepository {
         }
     }
 
-    public Usuario findById(Long id) {
+    public Usuario buscarPorId(Long id) {
         String sql = "SELECT * FROM usuario WHERE id = ?";
 
         Connection conn = null;
@@ -249,7 +214,7 @@ public class UsuarioRepository {
 
             Usuario usuario = null;
             if (rset.next()) {
-                usuario = mapUsuarioFromResultSet(rset);
+                usuario = mapearUsuarioDoResultSet(rset);
             }
             return usuario;
 
@@ -271,8 +236,16 @@ public class UsuarioRepository {
         }
     }
 
-    public List<Funcionario> findAllFuncionariosSemTarefasPendentes() {
-       String sql = "SELECT u.* FROM usuario u LEFT JOIN tarefa t ON u.id = t.funcionario_id WHERE u.cargo = 'FUNCIONARIO' AND (t.status IS NULL OR t.status != 'PENDENTE')";
+    public List<Funcionario> listarFuncionariosSemTarefasPendentes() {
+        String sql = "SELECT u.*\n" +
+                "FROM usuario u\n" +
+                "WHERE u.cargo = 'FUNCIONARIO'\n" +
+                "  AND NOT EXISTS (\n" +
+                "    SELECT 1\n" +
+                "    FROM tarefa t\n" +
+                "    WHERE t.funcionario_id = u.id\n" +
+                "      AND t.status = 'PENDENTE'\n" +
+                "  );";
 
         List<Funcionario> funcionarios = new ArrayList<>();
         Connection conn = null;
@@ -285,7 +258,7 @@ public class UsuarioRepository {
             rset = pstm.executeQuery();
 
             while (rset.next()) {
-                Funcionario funcionario = (Funcionario) mapUsuarioFromResultSet(rset);
+                Funcionario funcionario = (Funcionario) mapearUsuarioDoResultSet(rset);
                 funcionarios.add(funcionario);
             }
 
@@ -304,7 +277,7 @@ public class UsuarioRepository {
         }
     }
 
-    public List<Funcionario> findAllFuncionariosBySupervisorId(Long supervisorId) {
+    public List<Funcionario> listarFuncionariosPorSupervisorId(Long supervisorId) {
         String sql = "SELECT * FROM usuario WHERE cargo = 'FUNCIONARIO' AND supervisor_id = ?";
 
         List<Funcionario> funcionarios = new ArrayList<>();
@@ -319,7 +292,7 @@ public class UsuarioRepository {
             rset = pstm.executeQuery();
 
             while (rset.next()) {
-                Funcionario funcionario = (Funcionario) mapUsuarioFromResultSet(rset);
+                Funcionario funcionario = (Funcionario) mapearUsuarioDoResultSet(rset);
                 funcionarios.add(funcionario);
             }
 
@@ -338,7 +311,7 @@ public class UsuarioRepository {
         }
     }
 
-    private Usuario mapUsuarioFromResultSet(ResultSet rset) throws Exception {
+    private Usuario mapearUsuarioDoResultSet(ResultSet rset) throws Exception {
         String cargoStr = rset.getString("cargo");
         Cargo cargo = Cargo.valueOf(cargoStr);
 

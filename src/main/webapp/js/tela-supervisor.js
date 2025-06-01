@@ -4,9 +4,14 @@ const contextPath = window.location.pathname.split('/')[1]
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch(`${contextPath}/listaFuncionarios`)
-        .then(response => {
+        .then(async response => {
             if (!response.ok) {
-                throw new Error('Erro ao buscar funcionários');
+                let msg = 'Erro ao buscar funcionários';
+                try {
+                    const data = await response.json();
+                    msg = data.mensagem || data.message || msg;
+                } catch {}
+                throw new Error(msg);
             }
             return response.json();
         })
@@ -17,15 +22,18 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
 
             selects.forEach(select => {
+                // Limpa e adiciona a opção padrão
+                select.innerHTML = '<option value="">Selecione um funcionário</option>';
                 funcionarios.forEach(func => {
                     const option = document.createElement('option');
                     option.value = func.id;
                     option.textContent = func.nome;
-                    select.appendChild(option.cloneNode(true));
+                    select.appendChild(option);
                 });
             });
         })
         .catch(error => {
+            alert(error.message);
             console.error('Erro ao carregar os funcionários:', error);
         });
 
@@ -53,17 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(async response => {
                 let message = 'Erro desconhecido';
                 try {
-                    const contentType = response.headers.get('Content-Type');
-                    if (contentType && contentType.includes('application/json')) {
-                        const data = await response.json();
-                        if (data && data.message) message = data.message;
-                    } else {
-                        const text = await response.text();
-                        if (text) message = text;
-                    }
-                } catch (e) {
-                    console.error('Erro ao processar a resposta do servidor:', e);
-                }
+                    const data = await response.json();
+                    message = data.mensagem || data.message || message;
+                } catch (e) {}
 
                 if (!response.ok) {
                     throw new Error(message);
@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(error.message);
             });
     });
-
 
     function renderizarTarefas(tarefas) {
         const lista = document.getElementById('lista-tarefas');
@@ -104,9 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const select = document.getElementById('select-funcionario-filtro');
         const funcionarioId = select.value;
 
-        const lista = document.getElementById('lista-tarefas');
-        lista.innerHTML = '';
-
         if (!funcionarioId) {
             alert('Selecione um funcionário para filtrar.');
             return;
@@ -114,20 +110,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetch(`${contextPath}${endpoint}/${funcionarioId}`)
             .then(async response => {
-                if (!response.ok) {
-                    const errorMsg = await response.json();
-                    if (response.status === 404) {
-                        alert(errorMsg.message || 'Nenhuma tarefa encontrada.');
+                let msg = 'Erro ao buscar tarefas';
+                try {
+                    const data = await response.json();
+                    msg = data.mensagem || data.message || msg;
+                    if (!response.ok) {
+                        alert(msg);
                         return null;
                     }
-                    throw new Error(errorMsg.message || 'Erro ao buscar tarefas');
+                    return data;
+                } catch {
+                    if (!response.ok) {
+                        alert(msg);
+                        return null;
+                    }
+                    return [];
                 }
-                return response.json();
             })
             .then(tarefas => {
                 if (tarefas) renderizarTarefas(tarefas);
             })
             .catch(error => {
+                alert(error.message);
                 console.error('Erro ao carregar as tarefas:', error);
             });
     }

@@ -1,5 +1,6 @@
 package org.sistema.acompanhamento.tarefas.services;
 
+import org.sistema.acompanhamento.tarefas.exception.RelatorioNotFoundException;
 import org.sistema.acompanhamento.tarefas.model.Funcionario;
 import org.sistema.acompanhamento.tarefas.model.dto.*;
 import org.sistema.acompanhamento.tarefas.repository.RelatorioRepository;
@@ -24,10 +25,10 @@ public class RelatorioService {
     }
 
     public RelatorioTarefasCadastradasSupervisorDto gerarRelatorioPorSupervisor(int supervisorId) throws SQLException {
-        List<Map<String, Object>> registros = relatorioRepository.buscarDadosSupervisor(supervisorId);
+        List<Map<String, Object>> registros = relatorioRepository.buscarDadosDoSupervisor(supervisorId);
 
         if (registros.isEmpty()) {
-            return gerarRelatorioVazio();
+            throw new RelatorioNotFoundException("Nenhum dado encontrado para o supervisor informado.");
         }
 
         Map<String, Object> primeiro = registros.get(0);
@@ -58,7 +59,7 @@ public class RelatorioService {
     }
 
     public RelatorioTarefasPendentesDto gerarRelatorioDeTarefasPendentes() throws SQLException {
-        List<ListTarefaRelatorioDto> tarefasPendentes = tarefaRepository.buscarTarefasPendentes();
+        List<ListTarefaRelatorioDto> tarefasPendentes = tarefaRepository.buscarTarefasPendentesRelatorio();
 
         RelatorioTarefasPendentesDto relatorio = new RelatorioTarefasPendentesDto();
         relatorio.setRelatorio("Tarefas pendentes");
@@ -70,7 +71,7 @@ public class RelatorioService {
 
     public RelatorioFuncionariosSemPendenciasDto gerarRelatorioFuncionariosSemTarefas() throws SQLException {
         List<ListaUsuariosDto> funcionariosDto = new ArrayList<>();
-        List<Funcionario> funcionarios = usuarioRepository.findAllFuncionariosSemTarefasPendentes();
+        List<Funcionario> funcionarios = usuarioRepository.listarFuncionariosSemTarefasPendentes();
 
         for(Funcionario funcionario : funcionarios) {
             ListaUsuariosDto funcionarioDto = new ListaUsuariosDto(funcionario, null);
@@ -82,14 +83,6 @@ public class RelatorioService {
         relatorio.setTotalFuncionarios(funcionarios.size());
         relatorio.setFuncionarios(funcionariosDto);
 
-        return relatorio;
-    }
-
-    private RelatorioTarefasCadastradasSupervisorDto gerarRelatorioVazio() {
-        RelatorioTarefasCadastradasSupervisorDto relatorio = new RelatorioTarefasCadastradasSupervisorDto();
-        relatorio.setRelatorio("Tarefas cadastradas por supervisores");
-        relatorio.setTotalSupervisores(0);
-        relatorio.setDados(List.of());
         return relatorio;
     }
 }

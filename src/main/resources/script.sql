@@ -1,4 +1,3 @@
--- Remoção e criação das tabelas
 DROP TABLE IF EXISTS tarefa;
 DROP TABLE IF EXISTS usuario;
 
@@ -27,20 +26,20 @@ CREATE TABLE IF NOT EXISTS tarefa (
 
 -- Inserção dos supervisores
 INSERT INTO usuario (nome, email, senha, cpf, telefone, cargo)
-VALUES 
+VALUES
 ('João Supervisor', 'joao@empresa.com', 'senha123', '12345678900', '11999999999', 'SUPERVISOR'),
 ('Ana Supervisora', 'ana@empresa.com', 'senha222', '22233344455', '11666666666', 'SUPERVISOR');
 
 -- Inserção dos funcionários (supervisionados por João - id = 1)
 INSERT INTO usuario (nome, email, senha, cpf, telefone, cargo, supervisor_id)
-VALUES 
+VALUES
 ('Maria Funcionária', 'maria@empresa.com', 'senha456', '98765432100', '11888888888', 'FUNCIONARIO', 1),
 ('Carlos Funcionário', 'carlosf@empresa.com', 'senha457', '99988877766', '11777777777', 'FUNCIONARIO', 1),
 ('Juliana Funcionária', 'juliana@empresa.com', 'senha458', '55544433322', '11656565656', 'FUNCIONARIO', 1);
 
 -- Inserção dos funcionários (supervisionados por Ana - id = 2)
 INSERT INTO usuario (nome, email, senha, cpf, telefone, cargo, supervisor_id)
-VALUES 
+VALUES
 ('Felipe Funcionário', 'felipe@empresa.com', 'senha459', '11100099988', '11545454545', 'FUNCIONARIO', 2),
 ('Bianca Funcionária', 'bianca@empresa.com', 'senha460', '66677788899', '11434343434', 'FUNCIONARIO', 2);
 
@@ -50,13 +49,12 @@ VALUES ('Carlos Gerente', 'carlos@empresa.com', 'senha789', '11122233344', '1177
 
 -- Inserção de tarefas para os funcionários do João (id supervisor = 1)
 INSERT INTO tarefa (nome, descricao, status, supervisor_id, funcionario_id)
-VALUES 
-('Relatório Semanal', 'Elaborar relatório de progresso semanal.', 'PENDENTE', 1, 2),
+VALUES
+('Auditoria Interna', 'Preparar dados para auditoria.', 'PENDENTE', 1, 5),
 ('Organizar Documentos', 'Classificar e arquivar documentos antigos.', 'PENDENTE', 1, 3),
 ('Atualizar Planilhas', 'Revisar e atualizar planilhas de despesas.', 'CONCLUIDA', 1, 4);
 
 -- Inserção de tarefas para os funcionários da Ana (id supervisor = 2)
 INSERT INTO tarefa (nome, descricao, status, supervisor_id, funcionario_id)
-VALUES 
-('Auditoria Interna', 'Preparar dados para auditoria.', 'PENDENTE', 2, 5),
+VALUES('Relatório Semanal', 'Elaborar relatório de progresso semanal.', 'PENDENTE', 2, 7),
 ('Inventário', 'Fazer contagem de estoque e atualizar sistema.', 'PENDENTE', 2, 6);

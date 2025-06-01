@@ -12,17 +12,23 @@ function carregarSupervisores() {
         credentials: 'include'
     })
     .then(async response => {
-        const data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            data = {};
+        }
 
         if (!response.ok) {
-            console.error("Erro ao buscar supervisores:", data.message);
+            const msg = data.mensagem || data.message || "Erro ao buscar supervisores";
+            alert(msg);
             return;
         }
 
         const select = document.getElementById("supervisorSelect");
         select.innerHTML = '<option value="">Selecione um supervisor</option>';
 
-        data.forEach(sup => {
+        (data || []).forEach(sup => {
             const option = document.createElement("option");
             option.value = sup.id;
             option.textContent = sup.nome;
@@ -30,6 +36,7 @@ function carregarSupervisores() {
         });
     })
     .catch(error => {
+        alert("Erro inesperado ao carregar supervisores");
         console.error("Erro inesperado ao carregar supervisores:", error);
     });
 }
@@ -54,12 +61,24 @@ function gerarRelatorio(tipo) {
             credentials: 'include'
         })
         .then(async response => {
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            if (!response.ok) {
+                const msg = data.mensagem || data.message || "Erro ao gerar relatório";
+                areaRelatorio.innerHTML = `<p class="mensagem-vazia">${msg}</p>`;
+                return;
+            }
+
             const supervisor = data.dados && data.dados[0];
             const tarefas = supervisor?.tarefasCadastradas || [];
 
             if (!tarefas.length) {
-                areaRelatorio.innerHTML = '<p class="mensagem-vazia">Nenhuma tarefa encontrada para este supervisor.</p>';
+                areaRelatorio.innerHTML = `<p class="mensagem-vazia">${data.mensagem || data.message || "Nenhuma tarefa encontrada para este supervisor."}</p>`;
                 return;
             }
 
@@ -96,8 +115,8 @@ function gerarRelatorio(tipo) {
             areaRelatorio.innerHTML = relatorioHTML;
         })
         .catch(error => {
+            areaRelatorio.innerHTML = `<p class="mensagem-vazia">Erro ao gerar relatório.</p>`;
             console.error("Erro ao gerar relatório:", error);
-            areaRelatorio.innerHTML = '<p class="mensagem-vazia">Erro ao gerar relatório.</p>';
         });
 
     } else if (tipo === 'tarefasPorStatus') {
@@ -108,10 +127,21 @@ function gerarRelatorio(tipo) {
             credentials: 'include'
         })
         .then(async response => {
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            if (!response.ok) {
+                const msg = data.mensagem || data.message || "Erro ao gerar relatório";
+                areaRelatorio.innerHTML = `<p class="mensagem-vazia">${msg}</p>`;
+                return;
+            }
 
             if (!data.tarefas || data.tarefas.length === 0) {
-                areaRelatorio.innerHTML = '<p class="mensagem-vazia">Nenhuma tarefa pendente encontrada.</p>';
+                areaRelatorio.innerHTML = `<p class="mensagem-vazia">${data.mensagem || data.message || "Nenhuma tarefa pendente encontrada."}</p>`;
                 return;
             }
 
@@ -147,8 +177,8 @@ function gerarRelatorio(tipo) {
             areaRelatorio.innerHTML = relatorioHTML;
         })
         .catch(error => {
+            areaRelatorio.innerHTML = `<p class="mensagem-vazia">Erro ao gerar relatório.</p>`;
             console.error("Erro ao gerar relatório:", error);
-            areaRelatorio.innerHTML = '<p class="mensagem-vazia">Erro ao gerar relatório.</p>';
         });
 
     } else if (tipo === 'quantidadePorFuncionario') {
@@ -159,10 +189,21 @@ function gerarRelatorio(tipo) {
             credentials: 'include'
         })
         .then(async response => {
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            if (!response.ok) {
+                const msg = data.mensagem || data.message || "Erro ao gerar relatório";
+                areaRelatorio.innerHTML = `<p class="mensagem-vazia">${msg}</p>`;
+                return;
+            }
 
             if (!data.funcionarios || data.funcionarios.length === 0) {
-                areaRelatorio.innerHTML = '<p class="mensagem-vazia">Todos os funcionários têm tarefas atribuídas.</p>';
+                areaRelatorio.innerHTML = `<p class="mensagem-vazia">${data.mensagem || data.message || "Todos os funcionários têm tarefas atribuídas."}</p>`;
                 return;
             }
 
@@ -196,8 +237,8 @@ function gerarRelatorio(tipo) {
             areaRelatorio.innerHTML = relatorioHTML;
         })
         .catch(error => {
+            areaRelatorio.innerHTML = `<p class="mensagem-vazia">Erro ao gerar relatório.</p>`;
             console.error("Erro ao gerar relatório:", error);
-            areaRelatorio.innerHTML = '<p class="mensagem-vazia">Erro ao gerar relatório.</p>';
         });
     }
 }

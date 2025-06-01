@@ -12,12 +12,12 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     mensagemDiv.textContent = '';
 
     if (!email || !senha) {
-        alert("Email e Senha são obrigatorios")
+        mensagemDiv.textContent = "Email e Senha são obrigatórios";
         return;
     }
 
     try {
-       const response = await fetch(`${contextPath}/loginUsuario`, {
+        const response = await fetch(`${contextPath}/loginUsuario`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -41,12 +41,13 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
                     window.location.href = `${contextPath}/tela-funcionario.jsp`;
                     break;
                 default:
-                    alert('Cargo desconhecido: ' + cargo);
+                    mensagemDiv.textContent = data.mensagem || 'Cargo desconhecido';
             }
         } else {
-            alert(data.message);
+            mensagemDiv.textContent = data.mensagem || data.message || 'Erro ao realizar login';
         }
     } catch (error) {
+        mensagemDiv.textContent = 'Erro de conexão com o servidor';
         console.log(error);
     }
 });

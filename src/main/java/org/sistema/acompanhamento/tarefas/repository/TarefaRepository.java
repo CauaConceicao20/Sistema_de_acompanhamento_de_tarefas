@@ -13,14 +13,14 @@ import java.util.*;
 
 public class TarefaRepository {
 
-    public Tarefa createTarefa(Tarefa tarefa) {
+    public Tarefa criarTarefa(Tarefa tarefa) {
         String sql = "INSERT INTO tarefa (nome, descricao, status, supervisor_id, funcionario_id) VALUES (?, ?, ?, ?, ?)";
 
         Connection conn = null;
         PreparedStatement pstm = null;
         try {
             conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            pstm = conn.prepareStatement(sql);
 
             pstm.setString(1, tarefa.getNome());
             pstm.setString(2, tarefa.getDescricao());
@@ -36,19 +36,15 @@ public class TarefaRepository {
             return null;
         } finally {
             try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (pstm != null) pstm.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public Tarefa buscaTarefaPorId(Long id) {
+    public Tarefa buscarTarefaPorId(Long id) {
         String sql = "SELECT * FROM tarefa WHERE id = ?";
 
         Connection conn = null;
@@ -57,13 +53,13 @@ public class TarefaRepository {
 
         try {
             conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            pstm = conn.prepareStatement(sql);
             pstm.setLong(1, id);
 
             rset = pstm.executeQuery();
 
             if (rset.next()) {
-                return mapTarefaFromResultSet(rset);
+                return mapearTarefaDoResultSet(rset);
             } else {
                 return null;
             }
@@ -72,34 +68,29 @@ public class TarefaRepository {
             return null;
         } finally {
             try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (pstm != null) pstm.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public List<Tarefa> listaTarefas() {
+    public List<Tarefa> listarTarefas() {
         String sql = "SELECT * FROM tarefa";
 
         Connection conn = null;
         PreparedStatement pstm = null;
-
         List<Tarefa> tarefas = new ArrayList<>();
 
         try {
             conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            pstm = conn.prepareStatement(sql);
 
             ResultSet rset = pstm.executeQuery();
 
             while (rset.next()) {
-                tarefas.add(mapTarefaFromResultSet(rset));
+                tarefas.add(mapearTarefaDoResultSet(rset));
             }
 
             return tarefas;
@@ -108,35 +99,30 @@ public class TarefaRepository {
             return tarefas;
         } finally {
             try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (pstm != null) pstm.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public List<Tarefa> listaTarefasConcluidas(Long funcionarioId) {
+    public List<Tarefa> listarTarefasConcluidas(Long funcionarioId) {
         String sql = "SELECT * FROM tarefa WHERE funcionario_id = ? AND status = 'CONCLUIDA'";
 
         Connection conn = null;
         PreparedStatement pstm = null;
-
         List<Tarefa> tarefas = new ArrayList<>();
 
         try {
             conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            pstm = conn.prepareStatement(sql);
             pstm.setLong(1, funcionarioId);
 
             ResultSet rset = pstm.executeQuery();
 
             while (rset.next()) {
-                tarefas.add(mapTarefaFromResultSet(rset));
+                tarefas.add(mapearTarefaDoResultSet(rset));
             }
 
             return tarefas;
@@ -145,35 +131,30 @@ public class TarefaRepository {
             return tarefas;
         } finally {
             try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (pstm != null) pstm.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public List<Tarefa> listaTarefasPendentes(Long funcionarioId) {
+    public List<Tarefa> listarTarefasPendentes(Long funcionarioId) {
         String sql = "SELECT * FROM tarefa WHERE funcionario_id = ? AND status = 'PENDENTE'";
 
         Connection conn = null;
         PreparedStatement pstm = null;
-
         List<Tarefa> tarefas = new ArrayList<>();
 
         try {
             conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            pstm = conn.prepareStatement(sql);
             pstm.setLong(1, funcionarioId);
 
             ResultSet rset = pstm.executeQuery();
 
             while (rset.next()) {
-                tarefas.add(mapTarefaFromResultSet(rset));
+                tarefas.add(mapearTarefaDoResultSet(rset));
             }
 
             return tarefas;
@@ -182,35 +163,30 @@ public class TarefaRepository {
             return tarefas;
         } finally {
             try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (pstm != null) pstm.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public List<Tarefa> listaTarefasByFuncionarioId(Long funcionarioId) {
+    public List<Tarefa> listarTarefasPorFuncionarioId(Long funcionarioId) {
         String sql = "SELECT * FROM tarefa WHERE funcionario_id = ?";
 
         Connection conn = null;
         PreparedStatement pstm = null;
-
         List<Tarefa> tarefas = new ArrayList<>();
 
         try {
             conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            pstm = conn.prepareStatement(sql);
             pstm.setLong(1, funcionarioId);
 
             ResultSet rset = pstm.executeQuery();
 
             while (rset.next()) {
-                tarefas.add(mapTarefaFromResultSet(rset));
+                tarefas.add(mapearTarefaDoResultSet(rset));
             }
 
             return tarefas;
@@ -219,19 +195,15 @@ public class TarefaRepository {
             return tarefas;
         } finally {
             try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (pstm != null) pstm.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void updateStatusTarefa(Long tarefaId, StatusTarefa status) {
+    public void atualizarStatusTarefa(Long tarefaId, StatusTarefa status) {
         String sql = "UPDATE tarefa SET status = ? WHERE id = ?";
 
         Connection conn = null;
@@ -239,7 +211,7 @@ public class TarefaRepository {
 
         try {
             conn = DataBaseConnection.createConnection();
-            pstm = (PreparedStatement) conn.prepareStatement(sql);
+            pstm = conn.prepareStatement(sql);
             pstm.setString(1, status.toString());
             pstm.setLong(2, tarefaId);
             pstm.execute();
@@ -248,19 +220,15 @@ public class TarefaRepository {
             e.printStackTrace();
         } finally {
             try {
-                if (pstm != null) {
-                    pstm.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (pstm != null) pstm.close();
+                if (conn != null) conn.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public List<ListTarefaRelatorioDto> buscarTarefasPendentes() throws SQLException {
+    public List<ListTarefaRelatorioDto> buscarTarefasPendentesRelatorio() throws SQLException {
         String sql = """
                     SELECT t.id AS tarefa_id, t.nome, t.descricao, t.status,
                            u.nome AS funcionario_nome
@@ -289,8 +257,7 @@ public class TarefaRepository {
         return tarefas;
     }
 
-
-    private Tarefa mapTarefaFromResultSet(ResultSet rset) throws Exception {
+    private Tarefa mapearTarefaDoResultSet(ResultSet rset) throws Exception {
         Tarefa tarefa = new Tarefa();
         tarefa.setId(rset.getLong("id"));
         tarefa.setNome(rset.getString("nome"));

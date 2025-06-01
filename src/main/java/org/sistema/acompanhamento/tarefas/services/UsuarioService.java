@@ -1,5 +1,6 @@
 package org.sistema.acompanhamento.tarefas.services;
 
+import org.sistema.acompanhamento.tarefas.exception.UsuarioNotFoundException;
 import org.sistema.acompanhamento.tarefas.model.Funcionario;
 import org.sistema.acompanhamento.tarefas.model.Supervisor;
 import org.sistema.acompanhamento.tarefas.model.Usuario;
@@ -16,26 +17,50 @@ public class UsuarioService {
     }
 
     public List<Usuario> listaUsuarios() {
-        return usuarioRepository.findAllUsuarios();
+        List<Usuario> usuarios = usuarioRepository.listarTodosUsuarios();
+        if (usuarios == null || usuarios.isEmpty()) {
+            throw new UsuarioNotFoundException("Nenhum usuário encontrado");
+        }
+        return usuarios;
     }
 
     public List<Funcionario> listaFuncionarios() {
-        return usuarioRepository.findAllFuncionarios();
+        List<Funcionario> funcionarios = usuarioRepository.listarTodosFuncionarios();
+        if (funcionarios == null || funcionarios.isEmpty()) {
+            throw new UsuarioNotFoundException("Nenhum funcionário encontrado");
+        }
+        return funcionarios;
     }
 
     public List<Supervisor> listaSupervisores() {
-        return usuarioRepository.findAllSupervisores();
+        List<Supervisor> supervisores = usuarioRepository.listarTodosSupervisores();
+        if (supervisores == null || supervisores.isEmpty()) {
+            throw new UsuarioNotFoundException("Nenhum supervisor encontrado");
+        }
+        return supervisores;
     }
 
-    public  List<Funcionario> listaFuncionariosDeUmSupervisorEspecifico(Long id) {
-        return usuarioRepository.findAllFuncionariosBySupervisorId(id);
+    public List<Funcionario> listaFuncionariosDeUmSupervisorEspecifico(Long id) {
+        List<Funcionario> funcionarios = usuarioRepository.listarFuncionariosPorSupervisorId(id);
+        if (funcionarios == null || funcionarios.isEmpty()) {
+            throw new UsuarioNotFoundException("Nenhum funcionário encontrado para o supervisor");
+        }
+        return funcionarios;
     }
 
     public List<Funcionario> listaFuncionariosComTarefas() {
-        return usuarioRepository.findAllEmployeesWithTasks();
+        List<Funcionario> funcionarios = usuarioRepository.listarFuncionariosComTarefas();
+        if (funcionarios == null || funcionarios.isEmpty()) {
+            throw new UsuarioNotFoundException("Nenhum funcionário com tarefas encontrado");
+        }
+        return funcionarios;
     }
 
     public Usuario buscaPorId(Long id) {
-        return usuarioRepository.findById(id);
+        Usuario usuario = usuarioRepository.buscarPorId(id);
+        if (usuario == null) {
+            throw new UsuarioNotFoundException("Usuário não encontrado");
+        }
+        return usuario;
     }
 }

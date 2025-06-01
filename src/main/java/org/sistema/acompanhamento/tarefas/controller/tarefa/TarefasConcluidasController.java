@@ -5,14 +5,17 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.sistema.acompanhamento.tarefas.exception.TarefaNotFoundException;
+import org.sistema.acompanhamento.tarefas.exception.UsuarioNotFoundException;
 import org.sistema.acompanhamento.tarefas.model.Funcionario;
 import org.sistema.acompanhamento.tarefas.model.Tarefa;
 import org.sistema.acompanhamento.tarefas.model.Usuario;
 import org.sistema.acompanhamento.tarefas.model.dto.ListaTarefasFiltradasDto;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
-import org.sistema.acompanhamento.tarefas.model.enums.StatusTarefa;
+import org.sistema.acompanhamento.tarefas.model.enums.Cargo;
 import org.sistema.acompanhamento.tarefas.services.TarefaService;
 import org.sistema.acompanhamento.tarefas.services.UsuarioService;
+import org.sistema.acompanhamento.tarefas.util.ControllerUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,49 +37,31 @@ public class TarefasConcluidasController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         try {
-            HttpSession session = req.getSession(false);
-            if (session == null) {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autenticado")));
-                return;
-            }
+            HttpSession session = ControllerUtils.validarSessao(req, resp);
+            if (session == null) return;
 
-            String pathInfo = req.getPathInfo();
-            if (pathInfo == null || pathInfo.equals("/") || pathInfo.length() <= 1) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("ID do funcionário não fornecido")));
-                return;
-            }
+            if (!ControllerUtils.validarCargo(session, Cargo.SUPERVISOR, resp)) return;
 
-            long funcionarioId;
-            try {
-                funcionarioId = Long.parseLong(pathInfo.substring(1));
-            } catch (NumberFormatException e) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("ID do funcionário inválido")));
-                return;
-            }
+            Long funcionarioId = ControllerUtils.lerIdPath(req, resp, "ID do funcionário não fornecido");
+            if (funcionarioId == null) return;
 
             List<Tarefa> tarefas = tarefaService.listaTarefasConcluidas(funcionarioId);
-            if (tarefas.isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Nenhuma tarefa encontrada")));
-                return;
-            }
-
             Usuario usuario = usuarioService.buscaPorId(funcionarioId);
 
-            if(usuario instanceof Funcionario) {
+            if (usuario instanceof Funcionario) {
                 List<ListaTarefasFiltradasDto> tarefasDto = tarefas.stream()
                         .map(t -> new ListaTarefasFiltradasDto(t, usuario.getNome()))
                         .toList();
                 resp.setStatus(HttpServletResponse.SC_OK);
                 resp.getWriter().write(gson.toJson(tarefasDto));
-            }else {
+            } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não é um funcionário")));
             }
 
+        } catch (TarefaNotFoundException | UsuarioNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(gson.toJson(new MessageResponseDto(e.getMessage())));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Erro interno do servidor")));
@@ -90,46 +75,21 @@ public class TarefasConcluidasController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         try {
-            HttpSession session = req.getSession(false);
-            if (session == null) {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autenticado")));
-                return;
-            }
+            HttpSession session = ControllerUtils.validarSessao(req, resp);
+            if (session == null) return;
 
-            String pathInfo = req.getPathInfo(); // espera algo como "/1"
-            if (pathInfo == null || pathInfo.equals("/") || pathInfo.length() <= 1) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("ID da tarefa não fornecido")));
-                return;
-            }
+            if (!ControllerUtils.validarCargo(session, Cargo.FUNCIONARIO, resp)) return;
 
-            long tarefaId;
-            try {
-                tarefaId = Long.parseLong(pathInfo.substring(1)); // Remove a barra inicial
-            } catch (NumberFormatException e) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("ID da tarefa inválido")));
-                return;
-            }
-
-            Tarefa tarefa = tarefaService.buscaTarefaPorId(tarefaId);
-            if (tarefa == null) {
-                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Tarefa não encontrada")));
-                return;
-            }
-
-            if (tarefa.getStatus() == StatusTarefa.CONCLUIDA) {
-                resp.setStatus(HttpServletResponse.SC_CONFLICT);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("A tarefa já está concluída")));
-                return;
-            }
+            Long tarefaId = ControllerUtils.lerIdPath(req, resp, "ID da tarefa não fornecido");
+            if (tarefaId == null) return;
 
             tarefaService.atualizaStatusTarefaPraConcluida(tarefaId);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Tarefa concluída com sucesso")));
 
+        } catch (TarefaNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.getWriter().write(gson.toJson(new MessageResponseDto(e.getMessage())));
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Erro interno do servidor")));

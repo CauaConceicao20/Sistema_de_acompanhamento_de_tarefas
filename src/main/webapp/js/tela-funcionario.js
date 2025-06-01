@@ -9,9 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
     async function carregarTarefas(endpoint) {
         try {
             const resposta = await fetch(`${contextPath}${endpoint}`);
-            if (!resposta.ok) throw new Error('Erro ao buscar tarefas');
-            const tarefas = await resposta.json();
-            renderizarTarefas(tarefas);
+            let data;
+            try {
+                data = await resposta.json();
+            } catch {
+                data = {};
+            }
+
+            if (!resposta.ok) {
+                const msg = data.mensagem || data.message || 'Erro ao buscar tarefas';
+                listaTarefasDiv.innerHTML = `<p class="mensagem-vazia">${msg}</p>`;
+                return;
+            }
+
+            renderizarTarefas(data);
         } catch (erro) {
             console.error('Erro ao carregar tarefas:', erro);
             listaTarefasDiv.innerHTML = `<p class="mensagem-vazia">Erro ao carregar tarefas.</p>`;
@@ -55,20 +66,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('botao-atualizar')?.addEventListener('click', () => carregarTarefas(currentEndpoint));
 
-        // Botão concluir
+
         document.querySelectorAll('.btn-concluir').forEach(botao => {
             botao.addEventListener('click', async () => {
                 const id = botao.getAttribute('data-id');
-                await alternarStatusTarefa(id, true); // true = concluir
+                await alternarStatusTarefa(id, true);
                 carregarTarefas(currentEndpoint);
             });
         });
 
-        // Botão marcar como pendente
+
         document.querySelectorAll('.btn-pendente').forEach(botao => {
             botao.addEventListener('click', async () => {
                 const id = botao.getAttribute('data-id');
-                await alternarStatusTarefa(id, false); // false = pendente
+                await alternarStatusTarefa(id, false);
                 carregarTarefas(currentEndpoint);
             });
         });
@@ -81,13 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'PUT'
             });
 
-            const responseBody = await response.json();
-
-            if (!response.ok) {
-                throw new Error(responseBody.message || 'Erro ao atualizar o status da tarefa.');
+            let responseBody;
+            try {
+                responseBody = await response.json();
+            } catch {
+                responseBody = {};
             }
 
-            alert(responseBody.message);
+            const msg = responseBody.mensagem || responseBody.message || 'Erro ao atualizar o status da tarefa.';
+
+            if (!response.ok) {
+                throw new Error(msg);
+            }
+
+            alert(msg);
         } catch (error) {
             console.error('Erro ao alternar status da tarefa:', error);
             alert(error.message || 'Erro ao atualizar o status da tarefa.');

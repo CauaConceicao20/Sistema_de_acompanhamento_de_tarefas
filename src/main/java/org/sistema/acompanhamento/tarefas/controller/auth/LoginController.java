@@ -10,6 +10,7 @@ import org.sistema.acompanhamento.tarefas.model.Usuario;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
 import org.sistema.acompanhamento.tarefas.model.dto.LoginUsuarioDto;
 import org.sistema.acompanhamento.tarefas.services.LoginService;
+import org.sistema.acompanhamento.tarefas.exception.LoginException;
 
 import java.io.IOException;
 
@@ -42,10 +43,9 @@ public class LoginController extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(responseJson.toString());
 
-        } catch (IllegalArgumentException e) {
+        } catch (LoginException e) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             resp.getWriter().write(gson.toJson(new MessageResponseDto(e.getMessage())));
-
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Erro interno do servidor")));

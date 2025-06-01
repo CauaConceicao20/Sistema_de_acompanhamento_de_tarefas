@@ -5,10 +5,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.sistema.acompanhamento.tarefas.exception.RelatorioNotFoundException;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
 import org.sistema.acompanhamento.tarefas.model.dto.RelatorioTarefasCadastradasSupervisorDto;
 import org.sistema.acompanhamento.tarefas.model.enums.Cargo;
 import org.sistema.acompanhamento.tarefas.services.RelatorioService;
+import org.sistema.acompanhamento.tarefas.util.ControllerUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -16,8 +18,7 @@ import java.sql.SQLException;
 public class RelatorioDeTarefasSupervisorController extends HttpServlet {
 
     private final RelatorioService relatorioService;
-
-    Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     public RelatorioDeTarefasSupervisorController() {
         this.relatorioService = new RelatorioService();
@@ -28,49 +29,21 @@ public class RelatorioDeTarefasSupervisorController extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute("id") == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autenticado")));
-            return;
-        }
+        HttpSession session = ControllerUtils.validarSessao(req, resp);
+        if (session == null) return;
 
-        Cargo cargo = (Cargo) session.getAttribute("cargo");
-        if (cargo != Cargo.GERENTE) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.getWriter().write(gson.toJson(new MessageResponseDto("Usuário não autorizado")));
-            return;
-        }
+        if (!ControllerUtils.validarCargo(session, Cargo.GERENTE, resp)) return;
 
-        String pathInfo = req.getPathInfo();
-        if (pathInfo == null || pathInfo.length() <= 1) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write(gson.toJson(new MessageResponseDto("ID do supervisor não fornecido")));
-            return;
-        }
-
-        int supervisorId;
-        try {
-            supervisorId = Integer.parseInt(pathInfo.substring(1));
-        } catch (NumberFormatException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write(gson.toJson(new MessageResponseDto("ID inválido")));
-            return;
-        }
+        Long supervisorId = ControllerUtils.lerIdPath(req, resp, "ID do supervisor não fornecido");
+        if (supervisorId == null) return;
 
         try {
-            RelatorioTarefasCadastradasSupervisorDto relatorio = relatorioService.gerarRelatorioPorSupervisor(supervisorId);
-
-            if (relatorio.getDados().isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                resp.getWriter().write(gson.toJson(new MessageResponseDto("Nenhum supervisor encontrado")));
-                return;
-            }
-
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
+            RelatorioTarefasCadastradasSupervisorDto relatorio = relatorioService.gerarRelatorioPorSupervisor(supervisorId.intValue());
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(gson.toJson(relatorio));
+        } catch (RelatorioNotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            resp.getWriter().write(gson.toJson(new MessageResponseDto(e.getMessage())));
         } catch (SQLException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write(gson.toJson(new MessageResponseDto("Erro ao gerar relatório")));
