@@ -61,13 +61,13 @@ mvn clean install
 
 ### 3. Gere e implante o WAR
 ```bash
-cp target/sistema-de-acompanhamento-de-tarefas.war ${TOMCAT_HOME}/webapps/
+cp target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war ${TOMCAT_HOME}/webapps/
 ```
 
 ### 4. Inicie o servidor
 Acesse em:  
 ```
-http://localhost:8080/sistema-de-acompanhamento-de-tarefas
+http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT/login.jsp
 ```
 
 ---
