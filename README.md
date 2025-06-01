@@ -1,3 +1,4 @@
+
 # Task Management System - A Web-Based Employee Task Tracking Solution
 
 Uma aplicação web completa para que organizações possam gerenciar e acompanhar tarefas entre diferentes papéis (Gerentes, Supervisores e Funcionários), com atualizações de status em tempo real e relatórios detalhados.
@@ -48,6 +49,28 @@ Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva
 
 ## 🚀 Instalação e Execução
 
+### 0. Configure a variável de ambiente `TOMCAT_HOME`
+
+Para facilitar a implantação do arquivo WAR, defina a variável `TOMCAT_HOME` apontando para a pasta onde o Apache Tomcat está instalado.
+
+No Linux/macOS, no terminal, execute:
+
+```bash
+export TOMCAT_HOME=/caminho/para/apache-tomcat-11.0.7
+```
+
+Exemplo:
+
+```bash
+export TOMCAT_HOME=/home/user/apache-tomcat-11.0.7
+```
+
+**Importante:** Essa variável fica definida apenas para a sessão atual do terminal. Para persistir, adicione essa linha no arquivo `~/.bashrc`, `~/.zshrc` ou equivalente, dependendo do shell que você usa.
+
+No Windows, você pode definir variáveis de ambiente pelo painel de controle ou PowerShell.
+
+---
+
 ### 1. Clone o repositório
 ```bash
 git clone <repository-url>
@@ -61,21 +84,31 @@ mvn clean install
 
 ### 3. Gere e implante o WAR
 ```bash
-cp target/sistema-de-acompanhamento-de-tarefas.war ${TOMCAT_HOME}/webapps/
+cp target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war ${TOMCAT_HOME}/webapps/
 ```
 
-### 4. Inicie o servidor
-Acesse em:  
+💡 **Dica**: Se já houver um WAR antigo na pasta do Tomcat, ele será sobrescrito. Para garantir um deploy limpo:
+
+```bash
+cd ${TOMCAT_HOME}/webapps
+rm -rf sistema-de-acompanhamento-de-tarefas*
+cp /caminho/projeto/target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war .
 ```
-http://localhost:8080/sistema-de-acompanhamento-de-tarefas
+
+> Também é recomendável **parar o Tomcat antes de sobrescrever** e **iniciar novamente após copiar o WAR** para evitar conflitos ou problemas de cache.
+
+### 4. Inicie o servidor
+Acesse em:
+```
+http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT
 ```
 
 ---
 
 ## 🔑 Login
 
-- **Gerente**: acessa relatórios e visão geral  
-- **Supervisor**: gerencia tarefas e funcionários  
+- **Gerente**: acessa relatórios e visão geral
+- **Supervisor**: gerencia tarefas e funcionários
 - **Funcionário**: visualiza e atualiza tarefas
 
 ---
@@ -129,7 +162,7 @@ Se você já tiver Java, Maven e Tomcat configurados corretamente e o repositór
 
 Para garantir que tudo funcione:
 
-- Verifique as variáveis de ambiente: `JAVA_HOME`, `MAVEN_HOME`, `PATH`
+- Verifique as variáveis de ambiente: `JAVA_HOME`, `MAVEN_HOME`, `TOMCAT_HOME`, `PATH`
 - Certifique-se de que seu Tomcat esteja com a porta 8080 disponível
 - Confirme que o SQLite funciona corretamente no ambiente local
 
