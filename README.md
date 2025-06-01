@@ -31,7 +31,7 @@ Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva
     └── webapp            
         ├── css           
         ├── js            
-        └── WEB-INF       
+        └── WEB-INF
 ```
 
 ---
@@ -43,7 +43,7 @@ Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva
 - [Apache Tomcat 11.0.7+](https://tomcat.apache.org/download-11.cgi)
 - SQLite 3.x
 
-⚠️ **Importante**: Configure as variáveis de ambiente para `JAVA_HOME` e `MAVEN_HOME`, e adicione os executáveis (`java`, `mvn`) ao `PATH`.
+⚠️ **Importante**: Configure as variáveis de ambiente JAVA_HOME e MAVEN_HOME, e adicione os executáveis (`java`, `mvn`) ao PATH.
 
 ---
 
@@ -51,56 +51,92 @@ Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva
 
 ### 0. Configure a variável de ambiente `TOMCAT_HOME`
 
-Para facilitar a implantação do arquivo WAR, defina a variável `TOMCAT_HOME` apontando para a pasta onde o Apache Tomcat está instalado.
+Essa variável define o caminho de instalação do Apache Tomcat. A forma de configurá-la depende do sistema operacional e do terminal utilizado:
 
-No Linux/macOS, no terminal, execute:
+#### Linux/macOS
+
+- **Bash / Zsh / Fish (temporariamente):**
 
 ```bash
 export TOMCAT_HOME=/caminho/para/apache-tomcat-11.0.7
 ```
 
-Exemplo:
-
+- **Persistente (bash):**
+  Adicione ao final do arquivo `~/.bashrc` ou `~/.bash_profile`:
 ```bash
-export TOMCAT_HOME=/home/user/apache-tomcat-11.0.7
+export TOMCAT_HOME=/caminho/para/apache-tomcat-11.0.7
 ```
 
-**Importante:** Essa variável fica definida apenas para a sessão atual do terminal. Para persistir, adicione essa linha no arquivo `~/.bashrc`, `~/.zshrc` ou equivalente, dependendo do shell que você usa.
+- **Zsh:** use `~/.zshrc`
 
-No Windows, você pode definir variáveis de ambiente pelo painel de controle ou PowerShell.
+- **Fish shell:**
+```fish
+set -Ux TOMCAT_HOME /caminho/para/apache-tomcat-11.0.7
+```
+
+#### Windows
+
+- **CMD (temporariamente):**
+```cmd
+set TOMCAT_HOME=C:\caminho\para\apache-tomcat-11.0.7
+```
+
+- **PowerShell (temporariamente):**
+```powershell
+$env:TOMCAT_HOME = "C:\caminho\para\apache-tomcat-11.0.7"
+```
+
+- **Variável permanente:**
+    1. Painel de Controle > Sistema > Configurações Avançadas > Variáveis de Ambiente
+    2. Adicione `TOMCAT_HOME` com o caminho da pasta do Tomcat
 
 ---
 
 ### 1. Clone o repositório
+
 ```bash
 git clone <repository-url>
 cd sistema-de-acompanhamento-de-tarefas
 ```
 
 ### 2. Compile o projeto
+
 ```bash
 mvn clean install
 ```
 
 ### 3. Gere e implante o WAR
+
 ```bash
-cp target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war ${TOMCAT_HOME}/webapps/
+cp target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war "$TOMCAT_HOME/webapps/"
 ```
 
-💡 **Dica**: Se já houver um WAR antigo na pasta do Tomcat, ele será sobrescrito. Para garantir um deploy limpo:
+#### Dica: para garantir um deploy limpo:
 
 ```bash
-cd ${TOMCAT_HOME}/webapps
+cd "$TOMCAT_HOME/webapps"
 rm -rf sistema-de-acompanhamento-de-tarefas*
 cp /caminho/projeto/target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war .
 ```
 
-> Também é recomendável **parar o Tomcat antes de sobrescrever** e **iniciar novamente após copiar o WAR** para evitar conflitos ou problemas de cache.
+> É recomendável parar o Tomcat antes de sobrescrever e iniciá-lo novamente após a cópia do WAR:
 
-### 4. Inicie o servidor
-Acesse em:
+#### Parar o servidor Tomcat:
+```bash
+"$TOMCAT_HOME/bin/shutdown.sh"
+# ou shutdown.bat no Windows
 ```
-http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT
+#### Iniciar o Servidor Tomcat
+```bash
+"$TOMCAT_HOME/bin/startup.sh"
+# ou startup.bat no Windows
+```
+
+### 4. Acesse a aplicação
+
+Abra no navegador:
+```
+http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT/login.jsp
 ```
 
 ---
@@ -118,7 +154,7 @@ http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT
 ### Erro: “Database file not found”
 - Confirme que `database.db` está em `src/main/resources`
 - Verifique permissões do arquivo
-- Verifique se o driver JDBC do SQLite está incluso
+- Verifique se o driver JDBC do SQLite está incluído no `pom.xml`
 
 ### Erro: “User not authenticated”
 - Limpe cookies do navegador
@@ -134,7 +170,7 @@ http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT
 
 ## 🔁 Fluxo de Dados
 
-```text
+```
 [Web Browser] 
     ↓ 
 [Controllers] 
@@ -148,7 +184,7 @@ http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT
 
 - Autenticação: `LoginController` → `LoginService`
 - Tarefas: `TarefaController` → `TarefaService`
-- Relatórios: Controladores específicos → `RelatorioService`
+- Relatórios: controladores específicos → `RelatorioService`
 - Conexão DB: centralizada via `DataBaseConnection`
 - Sessões e validação de papéis: `ControllerUtils`
 - DTOs separam camadas de forma limpa
@@ -165,5 +201,3 @@ Para garantir que tudo funcione:
 - Verifique as variáveis de ambiente: `JAVA_HOME`, `MAVEN_HOME`, `TOMCAT_HOME`, `PATH`
 - Certifique-se de que seu Tomcat esteja com a porta 8080 disponível
 - Confirme que o SQLite funciona corretamente no ambiente local
-
----
