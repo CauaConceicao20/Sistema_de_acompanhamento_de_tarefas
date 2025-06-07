@@ -1,9 +1,5 @@
-const contextPath = window.location.pathname.split('/')[1]
-    ? '/' + window.location.pathname.split('/')[1]
-    : '';
-
 document.addEventListener('DOMContentLoaded', () => {
-    fetch(`${contextPath}/listaFuncionarios`)
+    fetch(`/listaFuncionarios`)
         .then(async response => {
             if (!response.ok) {
                 let msg = 'Erro ao buscar funcionários';
@@ -22,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ];
 
             selects.forEach(select => {
-                // Limpa e adiciona a opção padrão
                 select.innerHTML = '<option value="">Selecione um funcionário</option>';
                 funcionarios.forEach(func => {
                     const option = document.createElement('option');
@@ -51,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             funcionarioId
         };
 
-        fetch(`${contextPath}/cadastraTarefa`, {
+        fetch(`/cadastraTarefa`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -102,25 +97,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function listarTarefas(endpoint) {
         const select = document.getElementById('select-funcionario-filtro');
         const funcionarioId = select.value;
+        const lista = document.getElementById('lista-tarefas');
 
         if (!funcionarioId) {
             alert('Selecione um funcionário para filtrar.');
             return;
         }
 
-        fetch(`${contextPath}${endpoint}/${funcionarioId}`)
+        fetch(`${endpoint}/${funcionarioId}`)
             .then(async response => {
                 let msg = 'Erro ao buscar tarefas';
                 try {
                     const data = await response.json();
                     msg = data.mensagem || data.message || msg;
                     if (!response.ok) {
+                        lista.innerHTML = '';
                         alert(msg);
                         return null;
                     }
                     return data;
                 } catch {
                     if (!response.ok) {
+                        lista.innerHTML = '';
                         alert(msg);
                         return null;
                     }
@@ -131,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tarefas) renderizarTarefas(tarefas);
             })
             .catch(error => {
+                lista.innerHTML = '';
                 alert(error.message);
                 console.error('Erro ao carregar as tarefas:', error);
             });

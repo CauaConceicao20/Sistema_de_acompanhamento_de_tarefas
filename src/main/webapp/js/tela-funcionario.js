@@ -1,14 +1,10 @@
-const contextPath = window.location.pathname.split('/')[1]
-    ? '/' + window.location.pathname.split('/')[1]
-    : '';
-
 document.addEventListener('DOMContentLoaded', () => {
     const listaTarefasDiv = document.getElementById('lista-tarefas');
     let currentEndpoint = '/listaTarefasDeFuncionario';
 
     async function carregarTarefas(endpoint) {
         try {
-            const resposta = await fetch(`${contextPath}${endpoint}`);
+            const resposta = await fetch(`${endpoint}`);
             let data;
             try {
                 data = await resposta.json();
@@ -86,31 +82,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function alternarStatusTarefa(tarefaId, concluir) {
-        try {
-            const endpoint = concluir ? '/marcaComoConcluida/' : '/marcaComoPendente/';
-            const response = await fetch(`${contextPath}${endpoint}${tarefaId}`, {
-                method: 'PUT'
-            });
+         try {
+             const endpoint = concluir ? '/marcaComoConcluida/' : '/marcaComoPendente/';
+             const response = await fetch(`${endpoint}${tarefaId}`, {
+                 method: 'PUT'
+             });
 
-            let responseBody;
-            try {
-                responseBody = await response.json();
-            } catch {
-                responseBody = {};
-            }
+             let responseBody;
+             try {
+                 responseBody = await response.json();
+             } catch {
+                 responseBody = {};
+             }
 
-            const msg = responseBody.mensagem || responseBody.message || 'Erro ao atualizar o status da tarefa.';
+             const msg = responseBody.mensagem || responseBody.message || 'Erro ao atualizar o status da tarefa.';
 
-            if (!response.ok) {
-                throw new Error(msg);
-            }
+             if (!response.ok) {
+                 throw new Error(msg);
+             }
 
-            alert(msg);
-        } catch (error) {
-            console.error('Erro ao alternar status da tarefa:', error);
-            alert(error.message || 'Erro ao atualizar o status da tarefa.');
-        }
-    }
+             alert(msg);
+         } catch (error) {
+             alert(error.message || 'Erro ao atualizar o status da tarefa.');
+         }
+     }
 
     window.definirEndpoint = (endpoint) => {
         currentEndpoint = endpoint;

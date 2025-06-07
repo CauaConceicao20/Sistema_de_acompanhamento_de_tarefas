@@ -13,6 +13,7 @@ import org.sistema.acompanhamento.tarefas.model.Usuario;
 import org.sistema.acompanhamento.tarefas.model.dto.ListaTarefasFiltradasDto;
 import org.sistema.acompanhamento.tarefas.model.dto.MessageResponseDto;
 import org.sistema.acompanhamento.tarefas.model.enums.Cargo;
+import org.sistema.acompanhamento.tarefas.model.enums.StatusTarefa;
 import org.sistema.acompanhamento.tarefas.services.TarefaService;
 import org.sistema.acompanhamento.tarefas.services.UsuarioService;
 import org.sistema.acompanhamento.tarefas.util.ControllerUtils;
@@ -82,6 +83,13 @@ public class TarefasPendentesController extends HttpServlet {
 
             Long tarefaId = ControllerUtils.lerIdPath(req, resp, "ID da tarefa não fornecido");
             if (tarefaId == null) return;
+
+            Tarefa tarefa = tarefaService.buscaTarefaPorId(tarefaId);
+            if (tarefa.getStatus() == StatusTarefa.PENDENTE) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().write(gson.toJson(new MessageResponseDto("A tarefa já está como Pendente.")));
+                return;
+            }
 
             tarefaService.atualizaStatusTarefaPraPendente(tarefaId);
             resp.setStatus(HttpServletResponse.SC_OK);

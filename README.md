@@ -1,4 +1,3 @@
-
 # Task Management System - A Web-Based Employee Task Tracking Solution
 
 Uma aplicação web completa para que organizações possam gerenciar e acompanhar tarefas entre diferentes papéis (Gerentes, Supervisores e Funcionários), com atualizações de status em tempo real e relatórios detalhados.
@@ -38,7 +37,7 @@ Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva
 
 ## ⚙️ Pré-requisitos
 
-- [Java JDK 19](https://www.oracle.com/java/technologies/javase/jdk19-archive-downloads.html)
+- [Java JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - [Apache Maven 3.6+](https://maven.apache.org/download.cgi)
 - [Apache Tomcat 11.0.7+](https://tomcat.apache.org/download-11.cgi)
 - SQLite 3.x
@@ -151,17 +150,17 @@ http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT/login.js
 
 ## 🧰 Solução de Problemas
 
-### Erro: “Database file not found”
+### Erro: "Database file not found"
 - Confirme que `database.db` está em `src/main/resources`
 - Verifique permissões do arquivo
 - Verifique se o driver JDBC do SQLite está incluído no `pom.xml`
 
-### Erro: “User not authenticated”
+### Erro: "User not authenticated"
 - Limpe cookies do navegador
 - Verifique `web.xml` para timeout de sessão
 - Confirme login e senha corretos
 
-### Erro: “Unable to generate report”
+### Erro: "Unable to generate report"
 - Confirme se o usuário tem papel de Gerente
 - Verifique conectividade com o banco
 - Verifique se o ID do Supervisor existe

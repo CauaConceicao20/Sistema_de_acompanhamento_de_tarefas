@@ -1,13 +1,9 @@
-const contextPath = window.location.pathname.split('/')[1]
-    ? '/' + window.location.pathname.split('/')[1]
-    : '';
-
 document.addEventListener("DOMContentLoaded", () => {
     carregarSupervisores();
 });
 
 function carregarSupervisores() {
-    fetch(`${contextPath}/listaSupervisores`, {
+    fetch(`/listaSupervisores`, {
         method: 'GET',
         credentials: 'include'
     })
@@ -54,7 +50,7 @@ function gerarRelatorio(tipo) {
             return;
         }
 
-        url = `${contextPath}/relatorioDeTarefasCadastradasPorSupervisor/${supervisorId}`;
+        url = `/relatorioDeTarefasCadastradasPorSupervisor/${supervisorId}`;
 
         fetch(url, {
             method: 'GET',
@@ -120,7 +116,7 @@ function gerarRelatorio(tipo) {
         });
 
     } else if (tipo === 'tarefasPorStatus') {
-        url = `${contextPath}/relatorioDeTarefasPendentes`;
+        url = `/relatorioDeTarefasPendentes`;
 
         fetch(url, {
             method: 'GET',
@@ -182,7 +178,7 @@ function gerarRelatorio(tipo) {
         });
 
     } else if (tipo === 'quantidadePorFuncionario') {
-        url = `${contextPath}/relatorioDeFuncionariosSemPendencias`;
+        url = `/relatorioDeFuncionariosSemPendencias`;
 
         fetch(url, {
             method: 'GET',

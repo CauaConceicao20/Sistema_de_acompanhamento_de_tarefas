@@ -8,11 +8,8 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     const email = document.getElementById('email').value.trim();
     const senha = document.getElementById('senha').value.trim();
 
-    const mensagemDiv = document.getElementById('mensagem');
-    mensagemDiv.textContent = '';
-
     if (!email || !senha) {
-        mensagemDiv.textContent = "Email e Senha são obrigatórios";
+        alert("Email e Senha são obrigatórios");
         return;
     }
 
@@ -25,7 +22,10 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
             body: JSON.stringify({ email, senha })
         });
 
-        const data = await response.json();
+        let data = {};
+        try {
+            data = await response.json();
+        } catch {}
 
         if (response.ok) {
             const cargo = data.cargo ? data.cargo : null;
@@ -41,10 +41,10 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
                     window.location.href = `${contextPath}/tela-funcionario.jsp`;
                     break;
                 default:
-                    mensagemDiv.textContent = data.mensagem || 'Cargo desconhecido';
+                    alert(data.mensagem || 'Cargo desconhecido');
             }
         } else {
-            mensagemDiv.textContent = data.mensagem || data.message || 'Erro ao realizar login';
+            alert(data.mensagem || data.message || 'Erro ao realizar login');
         }
     } catch (error) {
         mensagemDiv.textContent = 'Erro de conexão com o servidor';

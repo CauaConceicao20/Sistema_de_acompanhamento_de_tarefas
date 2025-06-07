@@ -19,13 +19,12 @@
 
             <div class="botoes-da-area-de-login">
                 <button type="submit" id="submit">Login</button>
-                <a href="${pageContext.request.contextPath}/cadastrar.jsp">
+                <a href="#">
                     <button type="button">Cadastrar-se</button>
                 </a>
             </div>
         </form>
         <a href="#" class="esqueci-a-senha">Esqueci minha senha</a>
-        <div id="mensagem"></div>
     </div>
 </div>
 <script src="${pageContext.request.contextPath}/js/tela-login.js" type="module"></script>
