@@ -23,7 +23,7 @@ Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva
 
 ## Modelo de Domínio
 
-![alt text](image-1.png)
+![alt text](modelo-de-dominio.png)
 
 ## 📁 Estrutura do Repositório
 
@@ -66,7 +66,7 @@ Uma IDEA, Recomendamos o [IntelliJ IDEA ](https://www.jetbrains.com/idea/downloa
 #### Pré-requisitos:
 
 - Ter o **Docker instalado no sistema**, seja via Docker Desktop (GUI) ou Docker CLI.
-    - Para instalar: https://docs.docker.com/get-docker/
+    - Para instalar: https://www.docker.com/products/docker-desktop/
 
 #### Execução da aplicação via terminal (Docker CLI):
 
@@ -118,7 +118,7 @@ Uma IDEA, Recomendamos o [IntelliJ IDEA ](https://www.jetbrains.com/idea/downloa
 1. Clone o repositório do projeto:
    ```bash
    git clone https://github.com/CauaConceicao20/Sistema_de_acompanhamento_de_tarefas.git
-   cd sistema_de_acompanhamento_de_tarefas
+   cd sistema-de-acompanhamento-de-tarefas
    ```
 
 2. Compile o projeto e gere o pacote `.war`:
