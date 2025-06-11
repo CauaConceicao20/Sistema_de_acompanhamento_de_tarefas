@@ -9,7 +9,21 @@ O sistema oferece controle de acesso baseado em papéis, permitindo que:
 
 Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva para gerenciamento e geração de relatórios em toda a organização.
 
----
+**Nome completo e matrícula dos integrantes:**
+-  **Anthony Clayton Barros de Jesus Carvalho | Matrícula: 12723110413**
+-  **Anderson Silva Dantas Junior | Matrícula: 1272311567**
+-  **Cauã Souza Conceição | Matrícula: 1272310702**
+-  **Caio Sterphen Barbosa Santos | Matrícula: 12723115470**
+-  **Eros Eloi Alves da Paixão | Matrícula : 12723126200**
+-  **Italo da Conceicao Araujo | Matrícula: 12723114551**
+
+
+## Video de Apresentação Hospedado no Youtube:
+- **Link:** [Clique aqui pra ver a apresentação](https://www.youtube.com/watch?v=jgnxmZPWH2o)
+
+## Modelo de Domínio
+
+![alt text](image-1.png)
 
 ## 📁 Estrutura do Repositório
 
@@ -40,103 +54,98 @@ Construído com Java EE e SQLite, o sistema fornece uma interface web responsiva
 - [Java JDK 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - [Apache Maven 3.6+](https://maven.apache.org/download.cgi)
 - [Apache Tomcat 11.0.7+](https://tomcat.apache.org/download-11.cgi)
-- SQLite 3.x
 
-⚠️ **Importante**: Configure as variáveis de ambiente JAVA_HOME e MAVEN_HOME, e adicione os executáveis (`java`, `mvn`) ao PATH.
+Uma IDEA, Recomendamos o [IntelliJ IDEA ](https://www.jetbrains.com/idea/download/?section=windows)
 
 ---
 
 ## 🚀 Instalação e Execução
 
-### 0. Configure a variável de ambiente `TOMCAT_HOME`
+### A. Executar com Docker (Recomendado)
 
-Essa variável define o caminho de instalação do Apache Tomcat. A forma de configurá-la depende do sistema operacional e do terminal utilizado:
+#### Pré-requisitos:
 
-#### Linux/macOS
+- Ter o **Docker instalado no sistema**, seja via Docker Desktop (GUI) ou Docker CLI.
+    - Para instalar: https://docs.docker.com/get-docker/
 
-- **Bash / Zsh / Fish (temporariamente):**
+#### Execução da aplicação via terminal (Docker CLI):
 
-```bash
-export TOMCAT_HOME=/caminho/para/apache-tomcat-11.0.7
-```
+1. Baixe a imagem da aplicação hospedada no Docker Hub:
+   ```bash
+   docker pull cauaconceicao/a3-sdm-imagem
+   ```
 
-- **Persistente (bash):**
-  Adicione ao final do arquivo `~/.bashrc` ou `~/.bash_profile`:
-```bash
-export TOMCAT_HOME=/caminho/para/apache-tomcat-11.0.7
-```
+2. Crie e execute um contêiner com nome explícito:
+   ```bash
+   docker run -d -p 8080:8080 --name api-container cauaconceicao/a3-sdm-imagem
+   ```
 
-- **Zsh:** use `~/.zshrc`
+   Esse comando faz o seguinte:
+- Cria um contêiner baseado na imagem `cauaconceicao/a3-sdm-imagem`.
+- Mapeia a porta 8080 do contêiner para a porta 8080 da sua máquina.
+- Define explicitamente o nome do contêiner como `api-container`.
+- Inicia o servidor Apache Tomcat automaticamente dentro do contêiner.
 
-- **Fish shell:**
-```fish
-set -Ux TOMCAT_HOME /caminho/para/apache-tomcat-11.0.7
-```
+3. Abra o navegador e acesse:  
+   `http://localhost:8080`
 
-#### Windows
+#### Execução da aplicação via Docker Desktop (interface gráfica):
 
-- **CMD (temporariamente):**
-```cmd
-set TOMCAT_HOME=C:\caminho\para\apache-tomcat-11.0.7
-```
-
-- **PowerShell (temporariamente):**
-```powershell
-$env:TOMCAT_HOME = "C:\caminho\para\apache-tomcat-11.0.7"
-```
-
-- **Variável permanente:**
-    1. Painel de Controle > Sistema > Configurações Avançadas > Variáveis de Ambiente
-    2. Adicione `TOMCAT_HOME` com o caminho da pasta do Tomcat
+1. Abra o Docker Desktop.
+2. Vá até a aba **Images** e clique em **Pull from Docker Hub**.
+3. No campo de busca, procure por: `cauaconceicao/a3-sdm-imagem`
+4. Após o download da imagem, localize-a em **Images**.
+5. Clique em **Run**.
+6. Configure:
+- Porta local: `8080`
+- Nome do contêiner: `api-container` (opcional, mas recomendado)
+7. Clique em **Run Container**.
+8. Acesse a aplicação em: `http://localhost:8080`
 
 ---
 
-### 1. Clone o repositório
+### B. Executar Manualmente (Sem Docker)
 
-```bash
-git clone <repository-url>
-cd sistema-de-acompanhamento-de-tarefas
-```
+#### Pré-requisitos obrigatórios:
 
-### 2. Compile o projeto
+- Java 17 instalado e com variável de ambiente `JAVA_HOME` configurada
+- Apache Maven instalado e com variável `MAVEN_HOME` configurada
+- Apache Tomcat 11.0.7 configurado na máquina
+- Git instalado para clonar o repositório do projeto
 
-```bash
-mvn clean install
-```
+#### Passo a passo para execução local:
 
-### 3. Gere e implante o WAR
+1. Clone o repositório do projeto:
+   ```bash
+   git clone https://github.com/CauaConceicao20/Sistema_de_acompanhamento_de_tarefas.git
+   cd sistema_de_acompanhamento_de_tarefas
+   ```
 
-```bash
-cp target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war "$TOMCAT_HOME/webapps/"
-```
+2. Compile o projeto e gere o pacote `.war`:
+   ```bash
+   mvn clean package
+   ```
 
-#### Dica: para garantir um deploy limpo:
+3. Copie o arquivo `.war` gerado (localizado em `/target`) para a pasta `webapps/` do Apache Tomcat.
 
-```bash
-cd "$TOMCAT_HOME/webapps"
-rm -rf sistema-de-acompanhamento-de-tarefas*
-cp /caminho/projeto/target/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT.war .
-```
+4. Abra o terminal dentro da pasta `apache-tomcat-11.0.7\bin`.
 
-> É recomendável parar o Tomcat antes de sobrescrever e iniciá-lo novamente após a cópia do WAR:
+5. Inicie o servidor Tomcat:
+- Linux/Mac:
+  ```bash
+  ./bin/startup.sh
+  ```
+- Windows:
+  ```bash
+  .\bin\startup.bat
+  ```
 
-#### Parar o servidor Tomcat:
-```bash
-"$TOMCAT_HOME/bin/shutdown.sh"
-# ou shutdown.bat no Windows
-```
-#### Iniciar o Servidor Tomcat
-```bash
-"$TOMCAT_HOME/bin/startup.sh"
-# ou startup.bat no Windows
-```
+6. Acesse a aplicação via navegador:  
+   `http://localhost:8080/nome-do-projeto`
 
-### 4. Acesse a aplicação
+   `http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT/login`
 
-Abra no navegador:
-```
-http://localhost:8080/sistema-de-acompanhamento-de-tarefas-1.0-SNAPSHOT/login.jsp
-```
+---
 
 ---
 
