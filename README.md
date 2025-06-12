@@ -154,6 +154,17 @@ Uma IDEA, Recomendamos o [IntelliJ IDEA ](https://www.jetbrains.com/idea/downloa
 - **Gerente**: acessa relatórios e visão geral
 - **Supervisor**: gerencia tarefas e funcionários
 - **Funcionário**: visualiza e atualiza tarefas
+ 
+### Credenciais de Acesso
+#### Gerente
+- **Login**: carlos@empresa.com
+- **Senha**: senha789
+#### Supervisor
+- **Login**: ana@empresa.com
+- **Senha**: senha222
+#### Funcionario
+- **Login**: felipe@empresa.com
+- **Senha**: senha459 
 
 ---
 
